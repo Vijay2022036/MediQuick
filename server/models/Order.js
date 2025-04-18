@@ -6,10 +6,25 @@ const OrderSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-  medicines: [{
+  pharmacy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Medicine',
+    ref: 'Pharmacy',
     required: true
+  },
+  items: [{
+    medicine: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Medicine',
+      required: true
+    },
+    quantity: {
+      type: Number,
+      required: true
+    },
+    price: {
+      type: Number,
+      required: true
+    }
   }],
   status: {
     type: String,
@@ -24,7 +39,6 @@ const OrderSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-
   deliveryDate: {
     type: Date,
     required: true
@@ -37,6 +51,9 @@ const OrderSchema = new mongoose.Schema({
     type: String,
     enum: ['pending', 'completed', 'failed'],
     default: 'pending'
+  },
+  razorpayOrderId: {
+    type: String
   }
 });
 

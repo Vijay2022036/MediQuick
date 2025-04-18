@@ -3,7 +3,6 @@ const Medicine = require('../models/Medicine');
 const getAllMedicines = async (req, res, next) => {
   try {
     const medicines = await Medicine.find();
-    // console.log('Medicines:', medicines);
     res.json(medicines);
   } catch (err) {
     next(err);

@@ -73,8 +73,15 @@ const checkout = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).populate('cartData.medicine');
     const cartItems = user.cartData;
-    console.log(user);
-    const totalAmount = cartItems.reduce((acc, item) => acc + item.medicine.price * item.quantity, 0);
+
+    if (cartItems.length === 0) {
+      return res.status(400).json({ success: false, message: 'Cart is empty' });
+    }
+
+    const totalAmount = cartItems.reduce(
+      (acc, item) => acc + item.medicine.price * item.quantity,
+      0
+    );
 
     const razorpay = new Razorpay({
       key_id: process.env.RAZORPAY_KEY_ID,
@@ -88,11 +95,38 @@ const checkout = async (req, res) => {
     };
 
     const order = await razorpay.orders.create(options);
+    if (!order)
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to create Razorpay order'
+      });
 
-    res.json({ success: true, order });
+    // 🟢 Simulate payment success for now
+    for (let item of cartItems) {
+      const medicine = await Medicine.findById(item.medicine._id);
+      if (!medicine) continue;
+      medicine.stockQuantity = Math.max(0, medicine.stockQuantity - item.quantity);
+      await medicine.save();
+    }
+
+    const newOrder = {
+      items: cartItems.map(item => ({
+        medicine: item.medicine._id,
+        quantity: item.quantity
+      })),
+      totalAmount,
+      paymentStatus: 'paid'
+    };
+
+    user.orders.push(newOrder);
+    user.cartData = [];
+    await user.save();
+
+    res.json({ success: true, message: 'Order placed successfully', order });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
 
 export { addToCart, getUserCart, updateCartItemQuantity, removeFromCart, checkout };

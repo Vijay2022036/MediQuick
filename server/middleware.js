@@ -51,6 +51,9 @@ const pharmacy = (req, res, next) => {
   if (req.user.role !== 'pharmacy') {
     return res.status(403).json({ error: 'Access denied: Pharmacy only' });
   }
+  if (!req.user.verified) {
+    return res.status(403).json({ error: 'Access denied: Pharmacy not verified' });
+  }
   next();
 };
 

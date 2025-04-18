@@ -1,6 +1,4 @@
-// ✅ Updated User.js
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -19,6 +17,26 @@ const userSchema = new mongoose.Schema({
         default: 1,
         min: 1
       }
+    }
+  ],
+  orders: [
+    {
+      items: [
+        {
+          medicine: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Medicine',
+            required: true
+          },
+          quantity: {
+            type: Number,
+            required: true
+          }
+        }
+      ],
+      totalAmount: { type: Number, required: true },
+      createdAt: { type: Date, default: Date.now },
+      paymentStatus: { type: String, default: 'paid' }
     }
   ]
 });

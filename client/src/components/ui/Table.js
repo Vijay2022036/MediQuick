@@ -1,40 +1,34 @@
+// ui/Table.js
 import React from 'react';
 
-const Table = ({ data, columns }) => {
-  if (!data || data.length === 0) {
-    return <div className="text-gray-500">No data available.</div>;
-  }
-
+function Table({ data, columns }) {
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
-            {columns.map((column) => (
-              <th
-                key={column.key}
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                {column.label}
-              </th>
+    <table className="min-w-full bg-white border border-gray-300">
+      <thead>
+        <tr>
+          {columns.map((col) => (
+            <th
+              key={col.key}
+              className="px-4 py-2 border-b bg-gray-100 text-left text-sm font-medium text-gray-700"
+            >
+              {col.label}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {data.map((item) => (
+          <tr key={item._id} className="hover:bg-gray-50">
+            {columns.map((col) => (
+              <td key={col.key} className="px-4 py-2 border-t text-sm text-gray-800">
+                {col.render ? col.render(item) : item[col.key]}
+              </td>
             ))}
           </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {data.map((item) => (
-            <tr key={item.id}>
-              {columns.map((column) => (
-                <td key={`${item.id}-${column.key}`} className="px-6 py-4 whitespace-nowrap">
-                  {column.render ? column.render(item) : item[column.key]}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+        ))}
+      </tbody>
+    </table>
   );
-};
+}
 
 export default Table;
