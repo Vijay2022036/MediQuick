@@ -5,9 +5,10 @@ const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const [user, setUser] = useState({});
 // ✅ Cart.js - Updated rendering logic
   useEffect(() => {
+    setUser(JSON.parse(localStorage.getItem('user')) || {});
     const fetchCartItems = async () => {
       try {
         const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/cart`, {
@@ -78,8 +79,8 @@ const Cart = () => {
   const handleCheckout = async () => {
     try {
       const res = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/api/cart/checkout`,
-        {},
+        `${process.env.REACT_APP_API_BASE_URL}/api/payment/create-order`,
+        { cartItems },
         {
           withCredentials: true,
           headers: {
@@ -88,25 +89,52 @@ const Cart = () => {
           },
         }
       );
-  
-      if (res.data.success) {
-        const order = res.data.order;
+      const data = await res.data;
+      if (data.success) {
+        const order = data.order;
         const options = {
           key: process.env.REACT_APP_RAZORPAY_KEY_ID, // The Razorpay key ID
           amount: order.amount, // amount in paise (100 INR = 10000 paise)
           currency: order.currency,
           name: "Pharmacy App",
           description: "Medicine Purchase",
-          order_id: order.id, // order ID from Razorpay API
-          handler: function (response) {
-            // Success handler: When payment is successful
-            console.log("Payment Success:", response);
-            alert("Payment successful!");
-          },
-          prefill: {
-            name: "Customer",
-            email: "customer@example.com", // Use real user details here
-            contact: "9999999999" // Use real user contact here
+          order_id: order.id, // Razorpay order ID
+
+          handler: async function (response) {
+            try {
+              // Send payment details to the server for verification
+              const verifyRes = await axios.post(
+                `${process.env.REACT_APP_API_BASE_URL}/api/payment/verify`,
+                {
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                },
+                {
+                  withCredentials: true,
+                  headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${localStorage.getItem('token')}`,
+                  },
+                }
+              );
+
+              if (verifyRes.data.success) {
+                console.log("Payment verified successfully:", verifyRes.data);
+                alert("Payment successful and verified!");
+              } else {
+                console.error("Payment verification failed:", verifyRes.data);
+                alert("Payment verification failed. Please contact support.");
+              }
+            } catch (err) {
+              console.error("Error during payment verification:", err);
+              alert("An error occurred during payment verification.");
+            }
+            },
+            prefill: {
+            name: `${user.name}`, // Use real user details here
+            email: `${user.email}`, // Use real user details here
+            contact: `${user.contact}` // Use real user contact here
           },
           theme: { color: "#3399cc" }
         };

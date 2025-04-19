@@ -23,8 +23,8 @@ const getMedicineById = async (req, res, next) => {
 
 const createMedicine = async (req, res, next) => {
   const med = req.body;
-  const pharmacyId = req.user._id; // Assuming the pharmacy ID is in the token
-  med.pharmacy = pharmacyId; // Set the pharmacy ID in the medicine object
+  const pharmacyId = req.user._id; 
+  med.pharmacy = pharmacyId; 
   try {
     const newMedicine = new Medicine(med);
     await newMedicine.save();

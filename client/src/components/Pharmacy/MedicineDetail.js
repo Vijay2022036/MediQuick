@@ -77,11 +77,17 @@ function MedicineDetail() {
   return (
     <div className="max-w-4xl mx-auto mt-10 bg-white p-8 rounded-2xl shadow-lg">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <img
-          src={medicine.image || '/placeholder.png'}
-          alt={medicine.name}
-          className="w-full h-64 object-contain rounded-xl border"
-        />
+        <div className="flex items-center justify-center h-80 bg-gray-50 rounded-xl border overflow-hidden">
+          <img
+            src={medicine.image || '/placeholder.png'}
+            alt={medicine.name}
+            className="w-48 h-48 object-contain"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = '/placeholder.png';
+            }}
+          />
+        </div>
         <div className="flex flex-col justify-between">
           <div>
             <h2 className="text-3xl font-bold text-gray-800 mb-3">{medicine.name}</h2>

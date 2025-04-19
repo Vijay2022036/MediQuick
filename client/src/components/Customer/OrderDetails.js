@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 function OrderDetails() {
-  const { orderId } = useParams(); // Retrieve the order ID from the URL
+  const { orderId } = useParams(); 
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -20,28 +20,29 @@ function OrderDetails() {
         if (!token) {
           throw new Error('No authentication token found');
         }
-        let res = await fetch(`/api/orders`, {
+        const response = await fetch(`/api/orders/${orderId}`, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
           },
         });
-        if (!res.ok) {
-          throw new Error('Failed to fetch order details');
-        }
-        res = await res.json();
-        const orders = res.orders;
-        let response = null;
-        for (let i = 0; i < orders.length; i++) {
-          if (orders[i]._id === orderId) {
-            response = orders[i];
-            break;
+        if (!response.ok) {
+          if (response.status === 404) {
+            throw new Error('Order not found');
+          } else {
+            throw new Error(`Failed to fetch order details: ${response.statusText}`);
           }
         }
-        if (!response) {
-          throw new Error('Order not found');
+        let data;
+        try {
+          data = await response.json();
+        } catch (jsonError) {
+          throw new Error('Failed to parse response JSON');
         }
-        setOrder(response);
+        if (!data || !data.order) {
+          throw new Error('Invalid data format');
+        }
+        setOrder(data.order);
         
       } catch (err) {
         setError(err.message);
@@ -82,10 +83,9 @@ function OrderDetails() {
       <h1 className="text-4xl font-bold text-gray-800 mb-6">Order Details</h1>
       
       <p><strong>Order Number:</strong> {order._id}</p>
-      <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleDateString()}</p>
-      <p><strong>Total Amount:</strong> ${order.totalAmount.toFixed(2)}</p>
+      <p><strong>Date:</strong> {new Date(order.orderDate).toLocaleDateString()}</p>
+      <p><strong>Total Amount:</strong> INR {order.totalPrice.toFixed(2)}</p>
       <p><strong>Status:</strong> {order.paymentStatus}</p>
-      
       <h2 className="mt-4 text-2xl font-semibold">Items:</h2>
       <ul>
         {order.items.map((item, index) => (

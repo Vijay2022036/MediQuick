@@ -19,7 +19,7 @@ function OrderHistory() {
         const token = getToken();
         if (!token) throw new Error('No authentication token found');
 
-        const response = await fetch(`/api/orders`, {
+        const response = await fetch(`/api/orders/user`, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
@@ -30,7 +30,7 @@ function OrderHistory() {
 
         const data = await response.json();
         if (Array.isArray(data.orders)) {
-          setOrders(data.orders.map(order => ({ ...order, id: order._id })));
+          setOrders(data.orders.map(order => ({ ...order, id: order._id, totalAmount: order.totalAmount || 0 })));
         } else {
           throw new Error('Invalid data format');
         }
@@ -76,8 +76,8 @@ function OrderHistory() {
           data={orders}
           columns={[
             { header: 'Order ID', accessor: 'id' },
-            { header: 'Date', accessor: 'createdAt', format: (date) => new Date(date).toLocaleDateString() },
-            { header: 'Total Amount', accessor: 'totalAmount', format: (price) => `$${price.toFixed(2)}` },
+            { header: 'Date', accessor: 'orderDate', format: (date) => new Date(date).toLocaleDateString() },
+            { header: 'Total Amount', accessor: 'totalPrice', format: (price) => `INR ${price.toFixed(2)}` },
             { header: 'Payment Status', accessor: 'paymentStatus' },
             {
               header: 'Actions',

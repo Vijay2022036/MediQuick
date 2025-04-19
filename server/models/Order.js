@@ -6,11 +6,6 @@ const OrderSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-  pharmacy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Pharmacy',
-    required: true
-  },
   items: [{
     medicine: {
       type: mongoose.Schema.Types.ObjectId,
@@ -39,13 +34,15 @@ const OrderSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  deliveryDate: {
-    type: Date,
-    required: true
-  },
   deliveryAddress: {
     type: String,
-    required: true
+    optional: true, // Optional field
+    default: 'Default Address' // Default value if not provided
+    // required: true
+  },
+  deliveryDate: {
+    type: String,
+    default: Date.now + 5 * 24 * 60 * 60 * 1000 // Default to 5 days from now
   },
   paymentStatus: {
     type: String,

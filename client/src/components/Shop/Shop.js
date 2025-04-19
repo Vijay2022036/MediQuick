@@ -34,26 +34,29 @@ export default function Shop() {
     setQuantities(prev => ({ ...prev, [id]: qty }));
   };
 
-// ✅ Shop.js - Updated handleCart function
-const handleCart = async (medicineId) => {
-  const quantity = quantities[medicineId] || 1;
-  try {
-    await axios.post(
-      `${process.env.REACT_APP_API_BASE_URL}/api/cart/add`,
-      { itemId: medicineId, quantity },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-        withCredentials: true
-      }
-    );
-    alert(`${quantity} item(s) added to cart successfully!`);
-  } catch (error) {
-    console.error("Error adding to cart:", error);
-  }
-};
+  const handleCart = async (medicineId) => {
+    const quantity = quantities[medicineId] || 1;
+    if (quantity > medicines.find(med => med._id === medicineId).stockQuantity) {
+      alert("Quantity exceeds available stock!");
+      return;
+    }
+    try {
+      await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/api/cart/add`,
+        { itemId: medicineId, quantity },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+          withCredentials: true
+        }
+      );
+      alert(`${quantity} item(s) added to cart successfully!`);
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+    }
+  };
 
   const filteredMedicines = medicines.filter((medicine) =>
     medicine.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -90,14 +93,20 @@ const handleCart = async (medicineId) => {
                 key={medicine._id}
                 className="bg-white border rounded-2xl shadow-md hover:shadow-lg transition duration-200 hover:scale-105 p-5 flex flex-col items-center"
               >
-                <img
-                  src={medicine.image || '/placeholder.png'}
-                  alt={medicine.name}
-                  className="w-32 h-32 object-contain rounded-lg mb-4"
-                />
-                <div className="text-center">
+                <div className="w-full h-48 flex items-center justify-center mb-4 bg-gray-50 rounded-lg overflow-hidden">
+                  <img
+                    src={medicine.image || '/placeholder.png'}
+                    alt={medicine.name}
+                    className="w-32 h-32 object-contain"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = '/placeholder.png';
+                    }}
+                  />
+                </div>
+                <div className="text-center w-full">
                   <Link to={`/medicines/${medicine._id}`}>
-                    <h2 className="text-lg font-semibold text-gray-800 hover:text-orange-600">
+                    <h2 className="text-lg font-semibold text-gray-800 hover:text-orange-600 line-clamp-2 h-12">
                       {medicine.name}
                     </h2>
                   </Link>

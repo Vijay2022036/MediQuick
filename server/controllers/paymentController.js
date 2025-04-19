@@ -1,11 +1,14 @@
+require('dotenv').config();
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const User = require('../models/User');
 const Medicine = require('../models/Medicine');
+const Order = require('../models/Order');
+const mongoose = require('mongoose');
 
 const razorpayInstance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
 const createOrder = async (req, res) => {
@@ -22,21 +25,29 @@ const createOrder = async (req, res) => {
       0
     );
 
-    const options = {
-      amount: totalAmount * 100, // in paise
-      currency: 'INR',
-      receipt: `order_rcptid_${user._id}`
-    };
-
-    const order = await razorpayInstance.orders.create(options);
-
-    if (!order) {
-      return res.status(500).json({ success: false, message: 'Failed to create Razorpay order' });
+    if (totalAmount <= 0) {
+      return res.status(400).json({ success: false, message: 'Invalid total amount' });
     }
 
-    res.status(200).json({ success: true, order });
+    const options = {
+      amount: Math.round(totalAmount * 100), // Razorpay expects amount in paise
+      currency: 'INR',
+      receipt: `order_rcptid_${user._id}`,
+    };
+
+    console.log("Creating Razorpay Order with:", options);
+
+    razorpayInstance.orders.create(options, (err, order) => {
+      if (err) {
+        console.error("Razorpay Order Creation Error:", err);
+        return res.status(500).json({ success: false, message: 'Failed to create Razorpay order' });
+      }
+      res.status(200).json({ success: true, order });
+    });
+
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    console.error("Create Order Error:", err);
+    res.status(500).json({ success: false, message: "Something went wrong while creating order" });
   }
 };
 
@@ -57,7 +68,7 @@ const verifyPayment = async (req, res) => {
     const user = await User.findById(req.user._id).populate('cartData.medicine');
     const cartItems = user.cartData;
 
-    const totalAmount = cartItems.reduce(
+    const totalPrice = cartItems.reduce(
       (acc, item) => acc + item.medicine.price * item.quantity,
       0
     );
@@ -68,22 +79,28 @@ const verifyPayment = async (req, res) => {
       medicine.stockQuantity = Math.max(0, medicine.stockQuantity - item.quantity);
       await medicine.save();
     }
-
-    const newOrder = {
-      items: cartItems.map(item => ({
-        medicine: item.medicine._id,
-        quantity: item.quantity
-      })),
-      totalAmount,
-      paymentStatus: 'paid'
-    };
-
+    console.log("Updated stock quantities for medicines in cart");
+    const newOrder = new Order({
+          razorpayOrderId: razorpay_order_id,
+          customer: req.user._id,
+          items: cartItems.map(item => ({
+            medicine: item.medicine._id,
+            quantity: item.quantity,
+            price: item.medicine.price
+          })),
+          status: 'confirmed',
+          totalPrice,
+          paymentStatus: 'completed', // simulate payment success
+        });
+        console.log("New order created and pushed in user:", newOrder);
+    await newOrder.save();
     user.orders.push(newOrder);
     user.cartData = [];
     await user.save();
 
     res.status(200).json({ success: true, message: 'Payment verified and order placed' });
   } catch (err) {
+    console.error("Verify Payment Error:", err);
     res.status(500).json({ success: false, message: err.message });
   }
 };
