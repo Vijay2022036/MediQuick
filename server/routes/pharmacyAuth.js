@@ -40,12 +40,14 @@ router.get('/', protect , async (req, res) => {
     }
 });
 // DELETE pharmacy
-router.delete('/:id', protect , async (req, res) => {
+router.delete('/delete/:id', protect , async (req, res) => {
     try {
         const pharmacy = await Pharmacy.findByIdAndDelete(req.params.id);
         if (!pharmacy) {
             return res.status(404).json({ message: 'Pharmacy not found' });
         }
+        // Optionally, set the stock of all medicines associated with this pharmacy to 0
+        await Medicine.updateMany({ pharmacy: req.params.id }, { $set: { stockQuantity: 0 } });
         res.json({ message: 'Pharmacy deleted successfully' });
     } catch (err) {
         console.error(err);

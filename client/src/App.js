@@ -18,9 +18,11 @@ import PharmacyLogin from "./components/Pharmacy/PharmacyLogin";
 import PharmacyRegister from "./components/Pharmacy/PharmacyRegister";
 import PharmacyDashboard from "./components/Pharmacy/PharmacyDashboard";
 import AdminLogin from "./components/Admin/AdminLogin";
+import AdminApprovals from "./components/Admin/AdminApprovals";
 import AdminDashboard from "./components/Admin/AdminDashboard";
 import AdminUsers from "./components/Admin/AdminUsers";
 import AdminPharmacies from "./components/Admin/AdminPharmacies";
+import AdminProfile from "./components/Admin/AdminProfile";
 import AdminOrders from "./components/Admin/AdminOrders";
 import EditMedicine from "./components/Pharmacy/EditMedicine";
 import MedicineDetail from './components/Pharmacy/MedicineDetail';
@@ -64,6 +66,8 @@ function App() {
               <Route path="/admin/users" element={<AdminUsers />} />
               <Route path="/admin/pharmacies" element={<AdminPharmacies />} />
               <Route path="/admin/orders" element={<AdminOrders />} />
+              <Route path="/admin/approvals" element={<AdminApprovals />} />
+              <Route path="/admin/profile" element={<AdminProfile />} />
             </Route>
 
             {/* Unauthorized access redirects */}

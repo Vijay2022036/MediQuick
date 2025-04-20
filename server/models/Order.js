@@ -12,10 +12,6 @@ const OrderSchema = new mongoose.Schema({
       ref: 'Medicine',
       required: true
     },
-    image: {
-      type: String,
-      required: true
-    },
     quantity: {
       type: Number,
       required: true
@@ -27,7 +23,7 @@ const OrderSchema = new mongoose.Schema({
   }],
   status: {
     type: String,
-    enum: ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'],
+    enum: ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled' , 'processing'],
     default: 'pending'
   },
   totalPrice: {

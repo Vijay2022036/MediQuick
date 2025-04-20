@@ -5,18 +5,15 @@ import {
   Store, 
   BarChart3, 
   Calendar, 
-  Settings, 
   LogOut, 
-  Bell, 
   Search, 
   ChevronDown 
 } from 'lucide-react';
-import axios from 'axios'; // You'll need to install axios: npm install axios
+import axios from 'axios';
 
 function AdminDashboard() {
   const navigate = useNavigate();
-  const [userName, setUserName] = useState('Admin User');
-  const [notifications, setNotifications] = useState(3);
+  const [userName, setUserName] = useState('');
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalPharmacies: 0,
@@ -25,40 +22,51 @@ function AdminDashboard() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [timeRange, setTimeRange] = useState('7days'); // Default time range
+  const [timeRange, setTimeRange] = useState('7days');
 
+  // Fetch user profile and dashboard stats when component mounts
+  useEffect(() => {
+    fetchUserProfile();
+    fetchDashboardStats();
+  }, []);
+
+  // Re-fetch dashboard stats when time range changes
   useEffect(() => {
     fetchDashboardStats();
-  }, [timeRange]); // Re-fetch when time range changes
+  }, [timeRange]);
+
+  const fetchUserProfile = async () => {
+    try {
+      const response = await axios.get('/api/admin/profile', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      setUserName(response.data.name);
+    } catch (error) {
+      console.error("Failed to fetch user profile:", error);
+      // Use the stored name from local storage as fallback
+      const storedName = localStorage.getItem('userName');
+      if (storedName) setUserName(storedName);
+      else setUserName('Admin User');
+    }
+  };
 
   const fetchDashboardStats = async () => {
     setLoading(true);
     setError(null);
     try {
-      // Replace with your actual API endpoint
       const response = await axios.get('/api/admin/dashboard-stats', {
-        params: { timeRange }
+        params: { timeRange },
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
       });
       
-      setStats({
-        totalUsers: response.data.totalUsers,
-        totalPharmacies: response.data.totalPharmacies,
-        totalOrders: response.data.totalOrders,
-        pendingApprovals: response.data.pendingApprovals
-      });
+      setStats(response.data);
     } catch (error) {
       console.error("Failed to fetch dashboard stats:", error);
       setError("Failed to load dashboard statistics. Please try again later.");
-      
-      // Fallback to dummy data in development
-      if (process.env.NODE_ENV === 'development') {
-        setStats({
-          totalUsers: 856,
-          totalPharmacies: 124,
-          totalOrders: 2453,
-          pendingApprovals: 8
-        });
-      }
     } finally {
       setLoading(false);
     }
@@ -72,14 +80,18 @@ function AdminDashboard() {
     try {
       const response = await axios.get('/api/admin/export-report', {
         params: { timeRange },
-        responseType: 'blob' // Important for file downloads
+        responseType: 'blob',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
       });
       
       // Create a download link and trigger download
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `admin-report-${timeRange}.csv`);
+      const date = new Date().toISOString().split('T')[0];
+      link.setAttribute('download', `admin-report-${timeRange}-${date}.csv`);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -93,12 +105,18 @@ function AdminDashboard() {
     { name: 'Dashboard', icon: <BarChart3 size={20} />, active: true, path: '/admin/dashboard' },
     { name: 'Users', icon: <Users size={20} />, active: false, path: '/admin/users' },
     { name: 'Pharmacies', icon: <Store size={20} />, active: false, path: '/admin/pharmacies' },
-    { name: 'Calendar', icon: <Calendar size={20} />, active: false, path: '/admin/calendar' },
-    { name: 'Settings', icon: <Settings size={20} />, active: false, path: '/admin/settings' },
+    { name: 'Orders', icon: <Calendar size={20} />, active: false, path: '/admin/orders' },
   ];
 
   const handleNavigation = (path) => {
     navigate(path);
+  };
+
+  // Calculate percentage changes
+  const getPercentageChange = (current, previous) => {
+    if (!previous) return '+0%';
+    const change = ((current - previous) / previous) * 100;
+    return `${change > 0 ? '+' : ''}${change.toFixed(1)}%`;
   };
 
   return (
@@ -123,12 +141,12 @@ function AdminDashboard() {
               >
                 <span className="mr-3">{item.icon}</span>
                 {item.name}
-                {item.name === 'Users' && (
+                {item.name === 'Users' && stats.totalUsers > 0 && (
                   <span className="ml-auto bg-orange-100 text-orange-800 text-xs px-2 py-0.5 rounded-full">
                     {stats.totalUsers}
                   </span>
                 )}
-                {item.name === 'Pharmacies' && (
+                {item.name === 'Pharmacies' && stats.totalPharmacies > 0 && (
                   <span className="ml-auto bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full">
                     {stats.totalPharmacies}
                   </span>
@@ -141,7 +159,10 @@ function AdminDashboard() {
         <div className="absolute bottom-0 w-64 p-4 border-t">
           <button 
             className="flex items-center px-4 py-2 text-sm font-medium text-red-600 rounded-md hover:bg-red-50 w-full text-left"
-            onClick={() => navigate('/logout')}
+            onClick={() => {
+              localStorage.removeItem('token');
+              navigate('/login');
+            }}
           >
             <LogOut size={20} className="mr-3" />
             Log Out
@@ -166,24 +187,15 @@ function AdminDashboard() {
             </div>
             
             <div className="flex items-center space-x-4">
-              <button 
-                className="relative p-1 rounded-full text-gray-600 hover:bg-gray-100 focus:outline-none"
-                onClick={() => navigate('/admin/notifications')}
-              >
-                <Bell size={20} />
-                {notifications > 0 && (
-                  <span className="absolute top-0 right-0 block h-4 w-4 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">
-                    {notifications}
-                  </span>
-                )}
-              </button>
-              
               <div className="relative">
-                <button className="flex items-center space-x-2 focus:outline-none">
+                <button 
+                  className="flex items-center space-x-2 focus:outline-none"
+                  onClick={() => navigate('/admin/profile')}
+                >
                   <div className="h-8 w-8 rounded-full bg-orange-500 flex items-center justify-center text-white">
-                    {userName.charAt(0)}
+                    {userName ? userName.charAt(0) : 'A'}
                   </div>
-                  <span className="text-sm font-medium">{userName}</span>
+                  <span className="text-sm font-medium">{userName || 'Admin User'}</span>
                   <ChevronDown size={14} />
                 </button>
               </div>
@@ -195,24 +207,6 @@ function AdminDashboard() {
         <main className="flex-1 overflow-y-auto bg-gray-100 p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-semibold text-gray-800">Dashboard Overview</h2>
-            <div className="flex space-x-2">
-              <select 
-                className="border rounded-md px-3 py-1.5 bg-white text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                value={timeRange}
-                onChange={handleTimeRangeChange}
-              >
-                <option value="7days">Last 7 days</option>
-                <option value="30days">Last 30 days</option>
-                <option value="month">This Month</option>
-                <option value="year">This Year</option>
-              </select>
-              <button 
-                className="px-4 py-1.5 bg-orange-600 text-white text-sm rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                onClick={exportReport}
-              >
-                Export Report
-              </button>
-            </div>
           </div>
           
           {loading ? (
@@ -223,6 +217,12 @@ function AdminDashboard() {
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
               <strong className="font-bold">Error: </strong>
               <span className="block sm:inline">{error}</span>
+              <button 
+                className="mt-3 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                onClick={fetchDashboardStats}
+              >
+                Retry
+              </button>
             </div>
           ) : (
             <>
@@ -232,34 +232,66 @@ function AdminDashboard() {
                   title="Total Users" 
                   value={stats.totalUsers} 
                   icon={<Users size={24} className="text-orange-500" />}
-                  change="+12.5%"
-                  positive={true}
+                  change={getPercentageChange(stats.totalUsers, stats.previousUsers)}
+                  positive={stats.totalUsers >= (stats.previousUsers || 0)}
                   onClick={() => navigate('/admin/users')}
                 />
                 <StatCard 
                   title="Total Pharmacies" 
                   value={stats.totalPharmacies} 
                   icon={<Store size={24} className="text-green-500" />}
-                  change="+3.2%"
-                  positive={true}
+                  change={getPercentageChange(stats.totalPharmacies, stats.previousPharmacies)}
+                  positive={stats.totalPharmacies >= (stats.previousPharmacies || 0)}
                   onClick={() => navigate('/admin/pharmacies')}
                 />
                 <StatCard 
                   title="Total Orders" 
                   value={stats.totalOrders} 
                   icon={<BarChart3 size={24} className="text-purple-500" />}
-                  change="+24.8%"
-                  positive={true}
+                  change={getPercentageChange(stats.totalOrders, stats.previousOrders)}
+                  positive={stats.totalOrders >= (stats.previousOrders || 0)}
                   onClick={() => navigate('/admin/orders')}
                 />
                 <StatCard 
                   title="Pending Approvals" 
                   value={stats.pendingApprovals} 
                   icon={<Calendar size={24} className="text-orange-500" />}
-                  change="-2.3%"
-                  positive={false}
+                  change={getPercentageChange(stats.pendingApprovals, stats.previousApprovals)}
+                  positive={stats.pendingApprovals < (stats.previousApprovals || 0)}
                   onClick={() => navigate('/admin/approvals')}
                 />
+              </div>
+              
+              {/* Recent Activity Section */}
+              <div className="bg-white rounded-lg shadow mb-6">
+                <div className="p-4 border-b">
+                  <h3 className="text-lg font-medium">Recent Activity</h3>
+                </div>
+                <div className="p-4">
+                  {stats.recentActivity && stats.recentActivity.length > 0 ? (
+                    <div className="space-y-4">
+                      {stats.recentActivity.map((activity, index) => (
+                        <div key={index} className="flex items-start">
+                          <div className={`p-2 rounded-full mr-3 ${
+                            activity.type === 'user' ? 'bg-orange-100' :
+                            activity.type === 'pharmacy' ? 'bg-green-100' :
+                            activity.type === 'order' ? 'bg-purple-100' : 'bg-gray-100'
+                          }`}>
+                            {activity.type === 'user' && <Users size={16} className="text-orange-500" />}
+                            {activity.type === 'pharmacy' && <Store size={16} className="text-green-500" />}
+                            {activity.type === 'order' && <BarChart3 size={16} className="text-purple-500" />}
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-700">{activity.description}</p>
+                            <p className="text-xs text-gray-500 mt-1">{new Date(activity.timestamp).toLocaleString()}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-500 text-sm">No recent activity to display</p>
+                  )}
+                </div>
               </div>
               
               {/* Quick Access */}
@@ -279,11 +311,14 @@ function AdminDashboard() {
                   onClick={() => navigate('/admin/pharmacies')}
                 />
                 <QuickAccessCard 
-                  title="System Settings"
-                  description="Configure system preferences and settings"
-                  icon={<Settings size={24} className="text-white" />}
+                  title="Log Out"
+                  description="Log out of the admin panel"
+                  icon={<LogOut size={24} className="text-white" />}
                   bgColor="bg-purple-600"
-                  onClick={() => navigate('/admin/settings')}
+                  onClick={() => {
+                    localStorage.clear();
+                    navigate('/admin/login');
+                  }}
                 />
               </div>
             </>
@@ -303,13 +338,13 @@ function StatCard({ title, value, icon, change, positive, onClick }) {
       <div className="flex justify-between items-start">
         <div>
           <p className="text-sm font-medium text-gray-500">{title}</p>
-          <p className="text-2xl font-semibold mt-1">{value.toLocaleString()}</p>
+          <p className="text-2xl font-semibold mt-1">{value?.toLocaleString() || '0'}</p>
         </div>
         <div className="p-2 rounded-md bg-gray-50">{icon}</div>
       </div>
       <div className={`mt-4 flex items-center text-sm ${positive ? 'text-green-500' : 'text-red-500'}`}>
         <span>{change}</span>
-        <span className="ml-1.5">since last month</span>
+        <span className="ml-1.5">since last period</span>
       </div>
     </div>
   );

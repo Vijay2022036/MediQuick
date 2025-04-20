@@ -109,17 +109,13 @@ const verifyPayment = async (req, res) => {
     }
     console.log("Updated stock quantities for medicines in cart");
     
-    // Get delivery address either from request or from user's temp storage
-    const finalDeliveryAddress = deliveryAddress;
-    
-    // Create new order with delivery address
+    const finalDeliveryAddress = deliveryAddress;    
     const newOrder = new Order({
       razorpayOrderId: razorpay_order_id,
       razorpayPaymentId: razorpay_payment_id,
       customer: req.user._id,
       items: cartItems.map(item => ({
         medicine: item.medicine._id,
-        image: item.medicine.image,
         quantity: item.quantity,
         price: item.medicine.price
       })),
@@ -142,10 +138,7 @@ const verifyPayment = async (req, res) => {
     await newOrder.save();
     // Update user document
     user.orders.push(newOrder._id);
-    user.cartData = [];
-    
-    // Clear temporary delivery address
-    user.tempDeliveryAddress = undefined;
+    user.cartData = [];    
     await user.save();
 
     res.status(200).json({ 
