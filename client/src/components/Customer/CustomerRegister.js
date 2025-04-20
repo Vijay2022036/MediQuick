@@ -121,7 +121,7 @@ function CustomerRegister() {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+            className="w-full bg-orange-600 text-white py-2 rounded-md hover:bg-orange-700 transition"
           >
             Register
           </button>
@@ -129,7 +129,7 @@ function CustomerRegister() {
 
         <p className="mt-4 text-center text-sm text-gray-600">
           Already have an account?{' '}
-          <Link to="/customer/login" className="text-blue-600 hover:underline">
+          <Link to="/customer/login" className="text-orange-600 hover:underline">
             Login here
           </Link>
         </p>

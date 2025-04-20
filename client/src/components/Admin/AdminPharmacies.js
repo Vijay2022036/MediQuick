@@ -88,7 +88,7 @@ function AdminPharmacies() {
         !item.verified && (
           <Button
             onClick={() => handleVerify(item._id)}
-            className="bg-blue-500 hover:bg-blue-700 text-white px-3 py-1 rounded"
+            className="bg-orange-500 hover:bg-orange-700 text-white px-3 py-1 rounded"
           >
             Verify
           </Button>

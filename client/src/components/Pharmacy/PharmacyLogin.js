@@ -93,7 +93,7 @@ function PharmacyLogin() {
           />
           <Button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded mt-4"
+            className="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2 px-4 rounded mt-4"
           >
             Login
           </Button>
@@ -101,7 +101,7 @@ function PharmacyLogin() {
 
         <p className="text-center text-sm text-gray-600 mt-4">
           Don't have an account?{' '}
-          <Link to="/pharmacy/register" className="text-blue-600 hover:underline">
+          <Link to="/pharmacy/register" className="text-orange-600 hover:underline">
             Register here
           </Link>
         </p>

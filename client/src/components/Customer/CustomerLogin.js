@@ -94,7 +94,7 @@ function CustomerLogin() {
               {loginError}
             </p>
           )}
-          <Button type="submit" className="w-full" disabled={isLoading}>
+          <Button type="submit" className="w-full bg-orange-600 hover:bg-orange-700" disabled={isLoading}>
             {isLoading ? 'Logging in...' : 'Login'}
           </Button>
         </form>
@@ -102,7 +102,7 @@ function CustomerLogin() {
           Don't have an account?{' '}
           <button
             onClick={() => navigate('/customer/register')}
-            className="text-blue-500 hover:underline focus:outline-none"
+            className="text-orange-500 hover:underline focus:outline-none"
             type="button"
           >
             Register here

@@ -35,7 +35,7 @@ function Support() {
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-10">
-      <h1 className="text-3xl font-bold text-center text-blue-700 mb-8">Support</h1>
+      <h1 className="text-3xl font-bold text-center mb-8">Support</h1>
 
       <section className="mb-10">
         <h2 className="text-xl font-semibold mb-4">Frequently Asked Questions</h2>
@@ -62,22 +62,22 @@ function Support() {
         <h2 className="text-xl font-semibold mb-4">Contact Us</h2>
         <ul className="space-y-3 text-gray-700">
           <li className="flex items-center gap-2">
-            <MessageSquare className="text-blue-600" size={18} />
+            <MessageSquare className="text-orange-600" size={18} />
             <button
               onClick={() => navigate('/contact')}
-              className="hover:underline text-blue-700"
+              className="hover:underline text-orange-700"
             >
               Start Chat
             </button>
           </li>
           <li className="flex items-center gap-2">
-            <Phone className="text-blue-600" size={18} />
+            <Phone className="text-orange-600" size={18} />
             <a href="tel:+91-9876543210" className="hover:underline">
               +91-9876543210
             </a>
           </li>
           <li className="flex items-center gap-2">
-            <Mail className="text-blue-600" size={18} />
+            <Mail className="text-orange-600" size={18} />
             <a href="mailto:support@mediquik.com" className="hover:underline">
               support@mediquik.com
             </a>

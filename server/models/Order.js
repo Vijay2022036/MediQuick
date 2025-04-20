@@ -12,6 +12,10 @@ const OrderSchema = new mongoose.Schema({
       ref: 'Medicine',
       required: true
     },
+    image: {
+      type: String,
+      required: true
+    },
     quantity: {
       type: Number,
       required: true
@@ -35,14 +39,17 @@ const OrderSchema = new mongoose.Schema({
     default: Date.now,
   },
   deliveryAddress: {
-    type: String,
-    optional: true, // Optional field
-    default: 'Default Address' // Default value if not provided
-    // required: true
+    fullName: { type: String, required: true },
+    addressLine1: { type: String, required: true },
+    addressLine2: { type: String },
+    city: { type: String, required: true },
+    state: { type: String, required: true },
+    zipCode: { type: String, required: true },
+    phone: { type: String, required: true }
   },
   deliveryDate: {
-    type: String,
-    default: Date.now + 5 * 24 * 60 * 60 * 1000 // Default to 5 days from now
+    type: Date,
+    default: () => new Date(Date.now() + 5 * 24 * 60 * 60 * 1000)
   },
   paymentStatus: {
     type: String,
@@ -51,7 +58,11 @@ const OrderSchema = new mongoose.Schema({
   },
   razorpayOrderId: {
     type: String
+  },
+  razorpayPaymentId: {
+    type: String
   }
 });
+
 
 module.exports = mongoose.model('Order', OrderSchema);

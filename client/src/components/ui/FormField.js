@@ -1,22 +1,48 @@
 import React from 'react';
 
-const FormField = ({ label, name, type, value, onChange, error }) => {
+function FormField({
+  label,
+  name,
+  type = 'text',
+  value,
+  onChange,
+  placeholder = '',
+  required = false,
+  error = '',
+  className = '',
+}) {
+  const id = `field-${name}`;
+  
   return (
-    <div className="mb-4">
-      <label htmlFor={name} className="block text-gray-700 text-sm font-bold mb-2">
-        {label}
+    <div className={`space-y-2 ${className}`}>
+      <label 
+        htmlFor={id} 
+        className="block text-sm font-medium text-gray-700"
+      >
+        {label} {required && <span className="text-red-500">*</span>}
       </label>
+      
       <input
-        type={type}
+        id={id}
         name={name}
-        id={name}
+        type={type}
         value={value}
         onChange={onChange}
-        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${error ? 'border-red-500' : ''}`}
+        placeholder={placeholder}
+        required={required}
+        className={`
+          w-full px-3 py-2 
+          border rounded-md shadow-sm 
+          focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500
+          ${error ? 'border-red-300' : 'border-gray-300'}
+        `}
       />
-      {error && <p className="text-red-500 text-xs italic">{error}</p>}
+      
+      {error && (
+        <p className="text-sm text-red-600 mt-1">{error}</p>
+      )}
     </div>
   );
-};
+}
 
 export default FormField;

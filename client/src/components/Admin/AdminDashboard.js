@@ -106,7 +106,7 @@ function AdminDashboard() {
       {/* Sidebar */}
       <div className="w-64 bg-white shadow-md">
         <div className="p-4 border-b">
-          <h1 className="text-xl font-bold text-blue-600">Pharma Admin</h1>
+          <h1 className="text-xl font-bold text-orange-600">MediQuick</h1>
         </div>
         
         <div className="pt-2">
@@ -117,14 +117,14 @@ function AdminDashboard() {
                 onClick={() => handleNavigation(item.path)}
                 className={`flex items-center px-4 py-3 mt-1 text-sm font-medium rounded-md w-full text-left ${
                   item.active 
-                    ? 'bg-blue-50 text-blue-700' 
+                    ? 'bg-orange-50 text-orange-700' 
                     : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                 }`}
               >
                 <span className="mr-3">{item.icon}</span>
                 {item.name}
                 {item.name === 'Users' && (
-                  <span className="ml-auto bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full">
+                  <span className="ml-auto bg-orange-100 text-orange-800 text-xs px-2 py-0.5 rounded-full">
                     {stats.totalUsers}
                   </span>
                 )}
@@ -160,7 +160,7 @@ function AdminDashboard() {
                 <input
                   type="text"
                   placeholder="Search..."
-                  className="pl-10 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="pl-10 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -180,7 +180,7 @@ function AdminDashboard() {
               
               <div className="relative">
                 <button className="flex items-center space-x-2 focus:outline-none">
-                  <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                  <div className="h-8 w-8 rounded-full bg-orange-500 flex items-center justify-center text-white">
                     {userName.charAt(0)}
                   </div>
                   <span className="text-sm font-medium">{userName}</span>
@@ -197,7 +197,7 @@ function AdminDashboard() {
             <h2 className="text-2xl font-semibold text-gray-800">Dashboard Overview</h2>
             <div className="flex space-x-2">
               <select 
-                className="border rounded-md px-3 py-1.5 bg-white text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="border rounded-md px-3 py-1.5 bg-white text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500"
                 value={timeRange}
                 onChange={handleTimeRangeChange}
               >
@@ -207,7 +207,7 @@ function AdminDashboard() {
                 <option value="year">This Year</option>
               </select>
               <button 
-                className="px-4 py-1.5 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-4 py-1.5 bg-orange-600 text-white text-sm rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500"
                 onClick={exportReport}
               >
                 Export Report
@@ -217,7 +217,7 @@ function AdminDashboard() {
           
           {loading ? (
             <div className="flex items-center justify-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
             </div>
           ) : error ? (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
@@ -231,7 +231,7 @@ function AdminDashboard() {
                 <StatCard 
                   title="Total Users" 
                   value={stats.totalUsers} 
-                  icon={<Users size={24} className="text-blue-500" />}
+                  icon={<Users size={24} className="text-orange-500" />}
                   change="+12.5%"
                   positive={true}
                   onClick={() => navigate('/admin/users')}
@@ -268,7 +268,7 @@ function AdminDashboard() {
                   title="Manage Users"
                   description="View, edit, and manage all system users"
                   icon={<Users size={24} className="text-white" />}
-                  bgColor="bg-blue-600"
+                  bgColor="bg-orange-600"
                   onClick={() => navigate('/admin/users')}
                 />
                 <QuickAccessCard 

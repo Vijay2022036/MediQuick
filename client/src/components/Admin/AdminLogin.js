@@ -93,7 +93,7 @@ function AdminLogin() {
               {loginError}
             </p>
           )}
-          <Button type="submit" className="w-full" disabled={isLoading}>
+          <Button type="submit" className="w-full bg-orange-600 hover:bg-orange-700" disabled={isLoading}>
             {isLoading ? 'Logging in...' : 'Login'}
           </Button>
         </form>

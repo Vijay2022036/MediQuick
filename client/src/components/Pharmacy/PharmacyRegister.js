@@ -93,7 +93,7 @@ console.log(formData)
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
             />
             {errors.name && (
               <p className="text-sm text-red-600 mt-1">{errors.name}</p>
@@ -113,7 +113,7 @@ console.log(formData)
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
             />
             {errors.email && (
               <p className="text-sm text-red-600 mt-1">{errors.email}</p>
@@ -133,7 +133,7 @@ console.log(formData)
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
             />
             {errors.password && (
               <p className="text-sm text-red-600 mt-1">{errors.password}</p>
@@ -153,7 +153,7 @@ console.log(formData)
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
             />
             {errors.confirmPassword && (
               <p className="text-sm text-red-600 mt-1">
@@ -175,7 +175,7 @@ console.log(formData)
               name="phone"
               value={formData.phone}
               onChange={handleChange}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
             />
             {errors.phone && (
               <p className="text-sm text-red-600 mt-1">{errors.phone}</p>
@@ -195,7 +195,7 @@ console.log(formData)
               name="address"
               value={formData.address}
               onChange={handleChange}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
             />
             {errors.address && (
               <p className="text-sm text-red-600 mt-1">{errors.address}</p>
@@ -215,7 +215,7 @@ console.log(formData)
               name="licenseNumber"
               value={formData.licenseNumber}
               onChange={handleChange}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500"
             />
             {errors.licenseNumber && (
               <p className="text-sm text-red-600 mt-1">
@@ -229,7 +229,7 @@ console.log(formData)
           )}
 
           <button
-            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-200"
+            className="w-full bg-orange-600 text-white py-2 rounded-md hover:bg-orange-700 transition duration-200"
             onClick={handleSubmit}
           >
             Register
@@ -238,7 +238,7 @@ console.log(formData)
 
         <p className="mt-4 text-center text-sm text-gray-600">
           Already have an account?{" "}
-          <Link to="/pharmacy/login" className="text-blue-600 hover:underline">
+          <Link to="/pharmacy/login" className="text-orange-600 hover:underline">
             Login here
           </Link>
         </p>

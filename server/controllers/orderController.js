@@ -8,7 +8,7 @@ const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find()
       .populate('customer', 'name email') // optional: show customer details
-      .populate('items.medicine', 'name price') // optional: show medicine details
+      .populate('items.medicine', 'name price image') // optional: show medicine details
       .sort({ createdAt: -1 });
 
     res.status(200).json({ success: true, orders });
@@ -21,7 +21,7 @@ const getOrderById = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id)
       .populate('customer', 'name email') // optional: show customer details
-      .populate('items.medicine', 'name price') // optional: show medicine details
+      .populate('items.medicine', 'name price image') // optional: show medicine details
       .sort({ createdAt: -1 });
     if (!order) {
       return res.status(404).json({ success: false, message: 'Order not found' });
