@@ -118,19 +118,19 @@ const updateStatus = async (req, res, next) => {
 
 const generateReport = async (req, res) => {
   try {
-    const { timeRange } = req.query;
+    const { timeRange } = req.body;
     let startDate, endDate;
 
-    if (timeRange === 'daily') {
+    if (timeRange === '1day') {
       startDate = new Date();
       startDate.setHours(0, 0, 0, 0);
       endDate = new Date();
       endDate.setHours(23, 59, 59, 999);
-    } else if (timeRange === 'weekly') {
+    } else if (timeRange === '7days') {
       startDate = new Date();
       startDate.setDate(startDate.getDate() - 7);
       endDate = new Date();
-    } else if (timeRange === 'monthly') {
+    } else if (timeRange === '30days') {
       startDate = new Date();
       startDate.setMonth(startDate.getMonth() - 1);
       endDate = new Date();

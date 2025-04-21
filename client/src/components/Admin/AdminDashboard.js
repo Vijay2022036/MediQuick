@@ -87,7 +87,9 @@ function AdminDashboard() {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+        },
+        body: JSON.stringify({ timeRange })
+        
       });
       
       // Create a download link and trigger download
