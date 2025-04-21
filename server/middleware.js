@@ -8,7 +8,7 @@ const protect = async (req, res, next) => {
     const token = req.header('Authorization')?.replace('Bearer ', '');
 
     if (!token) {
-      alert('Not authorized , please login');
+      console.log('Not authorized , please login');
       return res.status(401).json({ error: 'Not authorized, no token' });
     }
 
@@ -32,18 +32,18 @@ const protect = async (req, res, next) => {
     if (!user) {
       return res.status(401).json({ error: 'Not authorized, user not found' });
     }
+
     req.user = user;
-    req.user.role = decoded.role; // ensure role is always available
+    req.user.role = decoded.role;
     next();
   } catch (error) {
-    alert('Not authorized, please login');
-    res.status(401).json({ error: 'Not authorized' });
+    console.log('Authorization error:', error.message);
+    return res.status(401).json({ error: 'Not authorized' });
   }
 };
 
 const admin = (req, res, next) => {
   if (req.user.role !== 'admin') {
-    alert('Access denied: Admin only');
     return res.status(403).json({ error: 'Access denied: Admin only' });
   }
   next();
@@ -51,11 +51,9 @@ const admin = (req, res, next) => {
 
 const pharmacy = (req, res, next) => {
   if (req.user.role !== 'pharmacy') {
-    alert('Access denied: Pharmacy only');
     return res.status(403).json({ error: 'Access denied: Pharmacy only' });
   }
   if (!req.user.verified) {
-    alert('Access denied: Pharmacy not verified');
     return res.status(403).json({ error: 'Access denied: Pharmacy not verified' });
   }
   next();
@@ -63,7 +61,6 @@ const pharmacy = (req, res, next) => {
 
 const customer = (req, res, next) => {
   if (req.user.role !== 'customer') {
-    alert('Access denied: Customer only');
     return res.status(403).json({ error: 'Access denied: Customer only' });
   }
   next();
