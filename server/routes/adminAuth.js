@@ -39,16 +39,16 @@ router.get('/approval', protect , admin , async (req, res, next) => {
     }
 });
 
-router.post('/export-report', protect , admin , async (req, res, next) => {
+router.get('/export-report', protect, admin, async (req, res, next) => {
     try {
-        const reportData = await generateReport(req , res);
+        const reportData = await generateReport(req, res);
         res.setHeader('Content-Type', 'text/csv');
         res.setHeader('Content-Disposition', 'attachment; filename=admin-report.csv');
-        res.send(reportData);
+        res.status(200).send(reportData);
     } catch (error) {
         next(error);
     }
-})
+});
 router.get('/profile', protect , admin , getProfile);
 router.get('/dashboard-stats', protect , admin , dashboardStats );
 router.put('/orders/status/:orderId', protect , admin , updateStatus );

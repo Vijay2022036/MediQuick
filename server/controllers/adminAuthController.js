@@ -118,7 +118,7 @@ const updateStatus = async (req, res, next) => {
 
 const generateReport = async (req, res) => {
   try {
-    const { timeRange } = req.body;
+    const { timeRange } = req.query;
     let startDate, endDate;
 
     if (timeRange === '1day') {

@@ -83,14 +83,11 @@ function AdminDashboard() {
 
   const exportReport = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/admin/export-report`, {
-        method: 'POST',
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/admin/export-report?timeRange=${timeRange}`, {
+        method: 'GET',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ timeRange })
-        
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
       });
       
       // Create a download link and trigger download
