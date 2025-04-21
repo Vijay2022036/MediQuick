@@ -113,7 +113,7 @@ const Cart = () => {
   // Function to check and mark items that exceed available stock
   const checkExceedsStock = (items, stockData) => {
     const exceedingItems = items.filter(item => {
-      const availableStock = stockData[item._id] || 0;
+      const availableStock = stockData[item._id.toString()] || 0;
       return item.quantity > availableStock;
     });
     
@@ -122,7 +122,7 @@ const Cart = () => {
       
       // Show notification for items exceeding stock
       exceedingItems.forEach(item => {
-        const availableStock = stockData[item._id] || 0;
+        const availableStock = stockData[item._id.toString()] || 0;
         toast.warning(
           `${item.name} has only ${availableStock} units in stock (you have ${item.quantity} in cart)`,
           { autoClose: 5000 }
@@ -141,7 +141,7 @@ const Cart = () => {
     if (!currentItem) return;
     
     // Check if new quantity exceeds available stock
-    const availableStock = stockInfo[currentItem.productId] || 0;
+    const availableStock = stockInfo[currentItem.productId.toString()] || 0;
     
     // Update UI immediately for better UX
     setCartItems(prev =>
