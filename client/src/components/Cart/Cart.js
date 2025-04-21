@@ -84,7 +84,7 @@ const Cart = () => {
       if (!token || !items.length) return;
       
       // Get product IDs from cart items
-      const productIds = items.map(item => item.productId);
+      const productIds = items.map(item => item._id);
       
       const res = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/api/medicines/stock-info`,
@@ -114,7 +114,7 @@ const Cart = () => {
   const checkExceedsStock = (items, stockData) => {
     const exceedingItems = items.filter(item => {
       // Use productId instead of _id to check stock
-      const availableStock = stockData[item.productId.toString()] || 0;
+      const availableStock = stockData[item._id.toString()] || 0;
       return item.quantity > availableStock;
     });
     
@@ -123,7 +123,7 @@ const Cart = () => {
       
       // Show notification for items exceeding stock
       exceedingItems.forEach(item => {
-        const availableStock = stockData[item.productId.toString()] || 0;
+        const availableStock = stockData[item._id.toString()] || 0;
         toast.warning(
           `${item.name} has only ${availableStock} units in stock (you have ${item.quantity} in cart)`,
           { autoClose: 5000 }
@@ -142,7 +142,7 @@ const Cart = () => {
     if (!currentItem) return;
     
     // Check if new quantity exceeds available stock
-    const availableStock = stockInfo[currentItem.productId.toString()] || 0;
+    const availableStock = stockInfo[currentItem._id.toString()] || 0;
     
     // Update UI immediately for better UX
     setCartItems(prev =>
@@ -373,9 +373,9 @@ const Cart = () => {
   // Function to get the stock status for an item
   const getStockStatus = (item) => {
     // Use productId instead of _id
-    if (!stockInfo[item.productId.toString()]) return null;
+    if (!stockInfo[item._id.toString()]) return null;
     
-    const availableStock = stockInfo[item.productId.toString()];
+    const availableStock = stockInfo[item._id.toString()];
     
     if (item.quantity > availableStock) {
       return {
