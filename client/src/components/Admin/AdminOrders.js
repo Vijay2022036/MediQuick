@@ -28,7 +28,7 @@ const AdminOrders = () => {
                 throw new Error('Authentication token not found');
             }
 
-            const response = await fetch('/api/admin/orders', {
+            const response = await fetch('${process.env.REACT_APP_API_BASE_URL}/api/admin/orders', {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
@@ -65,7 +65,7 @@ const AdminOrders = () => {
                 throw new Error('Authentication token not found');
             }
 
-            const response = await fetch(`/api/admin/orders/status/${orderId}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/admin/orders/status/${orderId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

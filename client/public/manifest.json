@@ -18,7 +18,8 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": ".",
+  "description": "A sample React application.",
+  "start_url": "/",
   "display": "standalone",
   "theme_color": "#000000",
   "background_color": "#ffffff"

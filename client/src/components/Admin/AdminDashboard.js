@@ -37,7 +37,7 @@ function AdminDashboard() {
 
   const fetchUserProfile = async () => {
     try {
-      const response = await axios.get('/api/admin/profile', {
+      const response = await axios.get('${process.env.REACT_APP_API_BASE_URL}/api/admin/profile', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -56,7 +56,7 @@ function AdminDashboard() {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get('/api/admin/dashboard-stats', {
+      const response = await axios.get('${process.env.REACT_APP_API_BASE_URL}/api/admin/dashboard-stats', {
         params: { timeRange },
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -78,7 +78,7 @@ function AdminDashboard() {
 
   const exportReport = async () => {
     try {
-      const response = await axios.get('/api/admin/export-report', {
+      const response = await axios.get('${process.env.REACT_APP_API_BASE_URL}/api/admin/export-report', {
         params: { timeRange },
         responseType: 'blob',
         headers: {

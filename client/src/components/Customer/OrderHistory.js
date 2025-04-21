@@ -30,7 +30,7 @@ function OrderHistory() {
       const token = getToken();
       if (!token) throw new Error('No authentication token found');
 
-      const response = await fetch(`/api/orders/user`, {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/orders/user`, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
