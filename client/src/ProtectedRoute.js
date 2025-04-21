@@ -14,6 +14,7 @@ const ProtectedRoute = ({ allowedRole, fallbackPath }) => {
   }
 
   if (allowedRole && allowedRole !== role) {
+    toast.error('You do not have permission to access this page.');
     return <Navigate to={fallbackPath} replace />;
   }
 
