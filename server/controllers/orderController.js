@@ -45,8 +45,26 @@ const getUserOrders = async (req, res) => {
   }
 };
 
+const updateOrderStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+    const order = await Order.findByIdAndUpdate(req.params.id, { status }, { new: true })
+      .populate('customer', 'name email') // optional: show customer details
+      .populate('items.medicine', 'name price image'); // optional: show medicine details
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+    res.status(200).json({ success: true, order });
+  }
+  catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
 module.exports = {
   getAllOrders,
   getOrderById,
   getUserOrders,
+  updateOrderStatus,
+  // deleteOrder,
+  // addOrder,
 };

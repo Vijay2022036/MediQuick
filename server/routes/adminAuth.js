@@ -41,6 +41,5 @@ router.get('/approval', protect , async (req, res, next) => {
 
 router.get('/profile', protect , getProfile);
 router.get('/dashboard-stats', protect , dashboardStats );
-router.put('/orders/status/:orderId', protect , updateStatus 
-);
+router.put('/orders/status/:orderId', protect , updateStatus );
 module.exports = router;

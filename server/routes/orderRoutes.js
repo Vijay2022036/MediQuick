@@ -6,7 +6,7 @@ const {
   getUserOrders,
   getOrderById,
   // deleteOrder,
-  // updateOrderStatus,
+  updateOrderStatus,
 } = require('../controllers/orderController');
 
 // Get all orders
@@ -36,14 +36,13 @@ orderRouter.get('/:id', protect, async (req, res, next) => {
 });
 
 
-// Update order status
-// orderRouter.put('/:id/status', protect, pharmacy, async (req, res, next) => {
-//   try {
-//     await updateOrderStatus(req, res);
-//   } catch (err) {
-//     next(err);
-//   }
-// });
+orderRouter.put('/status/:id', protect, pharmacy, async (req, res, next) => {
+  try {
+    await updateOrderStatus(req, res);
+  } catch (err) {
+    next(err);
+  }
+});
 
 
 // Delete an order

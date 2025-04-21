@@ -71,7 +71,7 @@ const AdminOrders = () => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify({ status: newStatus }),
+                body: ({ status: newStatus }),
             });
 
             if (!response.ok) {
