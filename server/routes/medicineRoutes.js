@@ -76,7 +76,7 @@ router.post('/stock-info', protect , customer , async (req, res) => {
       // Convert to object with medicine ID as key and stock as value
       const stockInfo = {};
       medicines.forEach(medicine => {
-        stockInfo[medicine._id.toString()] = medicine.stockQuantity || 0;
+        stockInfo[medicine._id] = medicine.stockQuantity || 0;
       });
       
       return res.status(200).json({
