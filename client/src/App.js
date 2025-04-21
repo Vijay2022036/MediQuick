@@ -75,6 +75,7 @@ function App() {
               {/* Unauthorized access redirects */}
               <Route path="/admin/*" element={<Navigate to="/AdminLogin" />} />
               <Route path="/pharmacy/*" element={<Navigate to="/PharmacyLogin" />} />
+              <Route path="/customer/*" element={<Navigate to="/CustomerLogin" />} />
               
               {/* Catch-all route for 404 */}
               <Route path="*" element={<Navigate to="/" />} />

@@ -36,6 +36,7 @@ const protect = async (req, res, next) => {
     req.user.role = decoded.role; // ensure role is always available
     next();
   } catch (error) {
+    alert('Not authorized, please login');
     res.status(401).json({ error: 'Not authorized' });
   }
 };

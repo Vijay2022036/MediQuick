@@ -2,11 +2,11 @@
 const express = require('express');
 const cartRouter = express.Router();
 const { addToCart, getUserCart, updateCartItemQuantity, removeFromCart } = require('../controllers/cartController.js');
-const auth = require('../middleware');
+const {protect , customer} = require('../middleware');
 
-cartRouter.get('/', auth.protect, getUserCart);
-cartRouter.post('/add', auth.protect, addToCart);
-cartRouter.put('/update', auth.protect, updateCartItemQuantity);
-cartRouter.delete('/:itemId', auth.protect, removeFromCart);
+cartRouter.get('/', protect, customer , getUserCart);
+cartRouter.post('/add', protect, customer , addToCart);
+cartRouter.put('/update', protect, customer , updateCartItemQuantity);
+cartRouter.delete('/:itemId', protect , customer , removeFromCart);
 
 module.exports = cartRouter;
