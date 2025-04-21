@@ -40,6 +40,8 @@ router.get('/approval', protect , admin , async (req, res, next) => {
 });
 
 router.get('/export-report', protect, admin, async (req, res, next) => {
+    console.log("Generating report...");
+    console.log(req.query.timeRange);
     try {
         const reportData = await generateReport(req, res);
         res.setHeader('Content-Type', 'text/csv');

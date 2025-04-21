@@ -119,6 +119,11 @@ const updateStatus = async (req, res, next) => {
 const generateReport = async (req, res) => {
   try {
     const { timeRange } = req.query;
+    if (!timeRange) {
+      alert('Time range is required');
+      return res.status(400).json({ message: 'Time range is required' });
+    }
+    console.log(timeRange);
     let startDate, endDate;
 
     if (timeRange === '1day') {
