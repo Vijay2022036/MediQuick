@@ -54,7 +54,7 @@ router.delete('/delete/:id', protect , admin , async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 });
-// routes/pharmacy.js
+// GET pharmacy profile
 router.get('/medicines' , protect , pharmacy , async (req, res) => {
     try {
       const pharmacyId = req.user._id;

@@ -37,12 +37,15 @@ function AdminDashboard() {
 
   const fetchUserProfile = async () => {
     try {
-      const response = await axios.get('${process.env.REACT_APP_API_BASE_URL}/api/admin/profile', {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/admin/profile`, {
+        method: 'GET',
         headers: {
+          'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
-      setUserName(response.data.name);
+      const data = await response.json();
+      setUserName(data.name);
     } catch (error) {
       console.error("Failed to fetch user profile:", error);
       // Use the stored name from local storage as fallback
@@ -56,14 +59,16 @@ function AdminDashboard() {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get('${process.env.REACT_APP_API_BASE_URL}/api/admin/dashboard-stats', {
-        params: { timeRange },
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/admin/dashboard-stats`, {
+        method: 'GET',
         headers: {
+          'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
       
-      setStats(response.data);
+      const data = await response.json();
+      setStats(data);
     } catch (error) {
       console.error("Failed to fetch dashboard stats:", error);
       setError("Failed to load dashboard statistics. Please try again later.");
