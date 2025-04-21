@@ -25,7 +25,6 @@ const pharmacyAuthRoutes = require('./routes/pharmacyAuth');
 const adminAuthRoutes = require('./routes/adminAuth');
 const orderRoutes = require('./routes/orderRoutes');
 const medicineRouter = require('./routes/medicineRoutes');
-const prescriptionRoutes = require('./routes/prescriptionRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 
 // Basic route for testing
@@ -40,7 +39,6 @@ app.use('/api/pharmacy', pharmacyAuthRoutes);
 app.use('/api/admin', adminAuthRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/medicines', medicineRouter);
-app.use('/api/prescriptions', prescriptionRoutes);
 app.use('/api/payment', paymentRoutes);
 
 // General error handling middleware
