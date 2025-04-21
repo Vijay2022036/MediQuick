@@ -109,7 +109,7 @@ const Cart = () => {
       console.error('Failed to fetch stock information:', err);
     }
   };
-  
+
   // Function to check and mark items that exceed available stock
   const checkExceedsStock = (items, stockData) => {
     const exceedingItems = items.filter(item => {
@@ -134,34 +134,6 @@ const Cart = () => {
     }
   };
 
-  const getStockStatus = (item) => {
-    // Use productId instead of _id
-    if (!stockInfo[item.productId.toString()]) return null;
-    
-    const availableStock = stockInfo[item.productId.toString()];
-    
-    if (item.quantity > availableStock) {
-      return {
-        exceeds: true,
-        available: availableStock
-      };
-    }
-    
-    if (availableStock <= 5) {
-      return {
-        exceeds: false,
-        available: availableStock,
-        lowStock: true
-      };
-    }
-    
-    return {
-      exceeds: false,
-      available: availableStock
-    };
-  };
-  
-  // Update handleQuantityChange function to use productId for stock checking
   const handleQuantityChange = async (itemId, quantity) => {
     if (quantity < 1) return;
     
@@ -212,7 +184,6 @@ const Cart = () => {
       toast.error('Failed to update item quantity');
     }
   };
-  
 
   const handleRemoveItem = async (itemId) => {
     try {
@@ -397,6 +368,34 @@ const Cart = () => {
     if (currentQuantity > 1) {
       handleQuantityChange(itemId, currentQuantity - 1);
     }
+  };
+
+  // Function to get the stock status for an item
+  const getStockStatus = (item) => {
+    // Use productId instead of _id
+    if (!stockInfo[item.productId.toString()]) return null;
+    
+    const availableStock = stockInfo[item.productId.toString()];
+    
+    if (item.quantity > availableStock) {
+      return {
+        exceeds: true,
+        available: availableStock
+      };
+    }
+    
+    if (availableStock <= 5) {
+      return {
+        exceeds: false,
+        available: availableStock,
+        lowStock: true
+      };
+    }
+    
+    return {
+      exceeds: false,
+      available: availableStock
+    };
   };
 
   if (loading) {
