@@ -41,7 +41,7 @@ router.get('/approval', protect , admin , async (req, res, next) => {
 
 router.post('/export-report', protect , admin , async (req, res, next) => {
     try {
-        const reportData = await generateReport(req);
+        const reportData = await generateReport(req , res);
         res.setHeader('Content-Type', 'text/csv');
         res.setHeader('Content-Disposition', 'attachment; filename=admin-report.csv');
         res.send(reportData);

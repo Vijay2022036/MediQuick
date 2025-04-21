@@ -148,6 +148,8 @@ const generateReport = async (req, res) => {
       OrderID: order._id,
       CustomerName: order.customer.name,
       TotalAmount: order.totalPrice,
+      Status: order.status,
+      PaymentStatus: order.paymentStatus,
       OrderDate: order.orderDate,
     }));
     console.log(csv);
