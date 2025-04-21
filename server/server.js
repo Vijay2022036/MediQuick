@@ -9,7 +9,13 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 const cors = require('cors');
-app.use(cors());
+app.use(cors({
+  origin: 'https://medi-quick-vk36.vercel.app',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
+  exposedHeaders: ['Authorization'],
+  optionsSuccessStatus: 200 // For legacy browser support
+}));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
