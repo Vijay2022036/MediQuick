@@ -1,6 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { ShoppingCart, Plus, Minus, Trash2, MapPin, CreditCard, ArrowRight, ChevronDown, ChevronUp, X, Check, Loader } from 'lucide-react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import {
+  ShoppingCart,
+  Plus,
+  Minus,
+  Trash2,
+  MapPin,
+  CreditCard,
+  ArrowRight,
+  ChevronDown,
+  ChevronUp,
+  X,
+  Check,
+  Loader
+} from 'lucide-react';
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -20,23 +35,34 @@ const Cart = () => {
   const [addressError, setAddressError] = useState('');
 
   useEffect(() => {
-    setUser(JSON.parse(localStorage.getItem('user')) || {});
+    const userData = localStorage.getItem('user');
+    setUser(userData ? JSON.parse(userData) : {});
+    
     const fetchCartItems = async () => {
       try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setLoading(false);
+          return;
+        }
+
         const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/cart`, {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${token}`,
           },
           withCredentials: true,
         });
+
         if (res.data.success) {
           setCartItems(res.data.cartData);
         } else {
           setError('Failed to load cart items');
+          toast.error('Failed to load cart items');
         }
       } catch (err) {
         setError('Failed to load cart items');
+        toast.error('Failed to load cart items');
       } finally {
         setLoading(false);
       }
@@ -47,7 +73,9 @@ const Cart = () => {
 
   const handleQuantityChange = async (itemId, quantity) => {
     if (quantity < 1) return;
+    
     try {
+      const token = localStorage.getItem('token');
       await axios.put(
         `${process.env.REACT_APP_API_BASE_URL}/api/cart/update`,
         { itemId, quantity },
@@ -55,37 +83,39 @@ const Cart = () => {
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
-      setCartItems((prev) =>
-        prev.map((item) =>
-          item._id === itemId
-            ? { ...item, quantity }
-            : item
+      
+      setCartItems(prev =>
+        prev.map(item =>
+          item._id === itemId ? { ...item, quantity } : item
         )
       );
     } catch (err) {
-      setError('Failed to update item quantity');
+      toast.error('Failed to update item quantity');
     }
   };
 
   const handleRemoveItem = async (itemId) => {
     try {
+      const token = localStorage.getItem('token');
       await axios.delete(
         `${process.env.REACT_APP_API_BASE_URL}/api/cart/${itemId}`,
         {
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
-      setCartItems((prev) => prev.filter(item => item._id !== itemId));
+      
+      setCartItems(prev => prev.filter(item => item._id !== itemId));
+      toast.success('Item removed from cart');
     } catch (err) {
-      setError('Failed to remove item from cart');
+      toast.error('Failed to remove item from cart');
     }
   };
 
@@ -98,25 +128,29 @@ const Cart = () => {
   };
 
   const validateAddress = () => {
-    // Basic validation
-    if (!addressFormData.fullName || !addressFormData.addressLine1 || 
-        !addressFormData.city || !addressFormData.state || 
-        !addressFormData.zipCode || !addressFormData.phone) {
+    // Required fields validation
+    const requiredFields = ['fullName', 'addressLine1', 'city', 'state', 'zipCode', 'phone'];
+    const missingFields = requiredFields.filter(field => !addressFormData[field]);
+    
+    if (missingFields.length > 0) {
       setAddressError('Please fill all required fields');
+      toast.error('Please fill all required fields');
       return false;
     }
     
-    // Phone validation (basic)
-    const phoneRegex = /^\d{10}$/;
-    if (!phoneRegex.test(addressFormData.phone.replace(/[^0-9]/g, ''))) {
-      setAddressError('Please enter a valid phone number');
+    // Phone validation
+    const cleanedPhone = addressFormData.phone.replace(/[^0-9]/g, '');
+    if (cleanedPhone.length !== 10) {
+      setAddressError('Please enter a valid 10-digit phone number');
+      toast.error('Please enter a valid 10-digit phone number');
       return false;
     }
     
-    // ZIP code validation (basic)
-    const zipRegex = /^\d{6}$/;
-    if (!zipRegex.test(addressFormData.zipCode.replace(/[^0-9]/g, ''))) {
+    // ZIP code validation
+    const cleanedZip = addressFormData.zipCode.replace(/[^0-9]/g, '');
+    if (cleanedZip.length !== 6) {
       setAddressError('Please enter a valid 6-digit ZIP code');
+      toast.error('Please enter a valid 6-digit ZIP code');
       return false;
     }
 
@@ -125,11 +159,12 @@ const Cart = () => {
   };
 
   const handleCheckout = async () => {
-    if (!validateAddress()) {
-      return;
-    }
+    if (!validateAddress()) return;
 
+    const toastId = toast.loading('Processing your order...');
+    
     try {
+      const token = localStorage.getItem('token');
       const res = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/api/payment/create-order`,
         { 
@@ -140,11 +175,12 @@ const Cart = () => {
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
-      const data = await res.data;
+
+      const data = res.data;
       if (data.success) {
         const order = data.order;
         const options = {
@@ -154,7 +190,6 @@ const Cart = () => {
           name: "Pharmacy App",
           description: "Medicine Purchase",
           order_id: order.id,
-
           handler: async function (response) {
             try {
               const verifyRes = await axios.post(
@@ -168,22 +203,30 @@ const Cart = () => {
                 {
                   withCredentials: true,
                   headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
                   },
                 }
               );
 
               if (verifyRes.data.success) {
-                console.log("Payment verified successfully:", verifyRes.data);
-                alert("Payment successful and verified!");
+                toast.dismiss(toastId);
+                toast.success('Payment successful! Your order is confirmed.', {
+                  position: "top-center",
+                  autoClose: 5000,
+                });
+                setCartItems([]);
               } else {
-                console.error("Payment verification failed:", verifyRes.data);
-                alert("Payment verification failed. Please contact support.");
+                toast.dismiss(toastId);
+                toast.error('Payment verification failed. Please contact support.', {
+                  position: "top-center"
+                });
               }
             } catch (err) {
-              console.error("Error during payment verification:", err);
-              alert("An error occurred during payment verification.");
+              toast.dismiss(toastId);
+              toast.error('An error occurred during payment verification.', {
+                position: "top-center"
+              });
             }
           },
           prefill: {
@@ -191,22 +234,34 @@ const Cart = () => {
             email: user.email,
             contact: addressFormData.phone || user.contact
           },
-          theme: { color: "#3399cc" }
+          theme: { color: "#3399cc" },
+          modal: {
+            ondismiss: () => {
+              toast.dismiss(toastId);
+              toast.info('Payment window closed', { autoClose: 2000 });
+            }
+          }
         };
-  
+
         const rzp = new window.Razorpay(options);
         rzp.open();
       } else {
-        alert("Failed to initiate checkout");
+        toast.dismiss(toastId);
+        toast.error('Failed to initiate checkout. Please try again.', {
+          position: "top-center"
+        });
       }
     } catch (err) {
-      console.error(err);
-      alert("Error during checkout");
+      toast.dismiss(toastId);
+      toast.error('Error during checkout. Please try again.', {
+        position: "top-center"
+      });
     }
   };
-  
-  const calculateTotal = () =>
-    Object.values(cartItems).reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2);
+
+  const calculateTotal = () => {
+    return cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2);
+  };
 
   const incrementQuantity = (itemId, currentQuantity) => {
     handleQuantityChange(itemId, currentQuantity + 1);
@@ -237,11 +292,13 @@ const Cart = () => {
 
   return (
     <div className="max-w-4xl mx-auto mt-10 p-4 sm:p-8 bg-white rounded-2xl shadow-md">
+      <ToastContainer />
       <h1 className="text-3xl font-bold text-gray-800 mb-6 flex items-center">
         <ShoppingCart className="mr-3 h-8 w-8 text-orange-600" />
         Your Cart
       </h1>
-      {Object.values(cartItems).length === 0 ? (
+      
+      {cartItems.length === 0 ? (
         <div className="text-gray-500 text-center py-12 flex flex-col items-center">
           <ShoppingCart className="h-16 w-16 text-gray-300 mb-4" />
           <p className="text-lg">Your cart is empty.</p>
@@ -249,7 +306,7 @@ const Cart = () => {
       ) : (
         <div className="space-y-6">
           <div className="space-y-4 mb-8">
-            {Object.values(cartItems).map((item) => (
+            {cartItems.map((item) => (
               <div
                 key={item._id}
                 className="flex flex-col sm:flex-row sm:items-center justify-between border rounded-lg p-4 hover:shadow-md transition-shadow"
@@ -343,6 +400,7 @@ const Cart = () => {
                       onChange={handleAddressInput}
                       className="w-full p-2 border rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                       placeholder="John Doe"
+                      required
                     />
                   </div>
                   <div>
@@ -354,6 +412,7 @@ const Cart = () => {
                       onChange={handleAddressInput}
                       className="w-full p-2 border rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                       placeholder="10-digit number"
+                      required
                     />
                   </div>
                   <div className="md:col-span-2">
@@ -365,6 +424,7 @@ const Cart = () => {
                       onChange={handleAddressInput}
                       className="w-full p-2 border rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                       placeholder="Street address"
+                      required
                     />
                   </div>
                   <div className="md:col-span-2">
@@ -387,6 +447,7 @@ const Cart = () => {
                       onChange={handleAddressInput}
                       className="w-full p-2 border rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                       placeholder="City"
+                      required
                     />
                   </div>
                   <div>
@@ -398,6 +459,7 @@ const Cart = () => {
                       onChange={handleAddressInput}
                       className="w-full p-2 border rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                       placeholder="State"
+                      required
                     />
                   </div>
                   <div>
@@ -409,6 +471,7 @@ const Cart = () => {
                       onChange={handleAddressInput}
                       className="w-full p-2 border rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                       placeholder="6-digit code"
+                      required
                     />
                   </div>
                 </div>
@@ -418,7 +481,8 @@ const Cart = () => {
 
           <button 
             onClick={handleCheckout} 
-            className="w-full mt-6 px-6 py-3 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition duration-200 flex items-center justify-center"
+            className="w-full mt-6 px-6 py-3 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition duration-200 flex items-center justify-center disabled:opacity-50"
+            disabled={cartItems.length === 0}
           >
             <CreditCard className="h-5 w-5 mr-2" />
             Proceed to Payment

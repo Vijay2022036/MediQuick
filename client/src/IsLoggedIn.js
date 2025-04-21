@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
-import { useNavigate , Outlet } from 'react-router-dom';
-import {jwtDecode} from 'jwt-decode';
+import { useNavigate, Outlet } from 'react-router-dom';
+import jwtDecode from 'jwt-decode';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const isTokenExpired = (token) => {
   try {
@@ -30,13 +32,18 @@ const IsLoggedIn = () => {
         } catch {}
 
         localStorage.clear();
-        alert('Session expired. Please log in again.');
+        toast.error('Session expired. Please log in again.');
         navigate(`/${role}/login`);
       }
     }
   }, []);
 
-  return <Outlet/>; // optional: or return <Outlet /> if you want nested routing
+  return (
+    <>
+      <ToastContainer />
+      <Outlet />
+    </>
+  );
 };
 
 export default IsLoggedIn;

@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { FiSearch, FiShoppingCart } from 'react-icons/fi';
 import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
 import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Shop() {
   const [medicines, setMedicines] = useState([]);
@@ -12,6 +14,7 @@ export default function Shop() {
   const [error, setError] = useState(null);
   const [quantities, setQuantities] = useState({});
   const [cartAnimation, setCartAnimation] = useState(null);
+  const navigate = useNavigate();
 
   // Fetch medicines
   useEffect(() => {
@@ -24,6 +27,7 @@ export default function Shop() {
         setMedicines(response.data);
       } catch (err) {
         setError(err.message || 'Failed to load products');
+        toast.error('Failed to load products. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -55,8 +59,10 @@ export default function Shop() {
     const medicine = medicines.find(med => med._id === medicineId);
     
     if (quantity > medicine.stockQuantity) {
-      // Create toast notification instead of alert
-      showNotification('Quantity exceeds available stock!', 'error');
+      toast.error('Quantity exceeds available stock!', {
+        position: "top-center",
+        autoClose: 3000,
+      });
       return;
     }
     
@@ -75,7 +81,10 @@ export default function Shop() {
         }
       );
       
-      showNotification(`${quantity} ${medicine.name} added to cart`, 'success');
+      toast.success(`${quantity} ${medicine.name} added to cart`, {
+        position: "top-center",
+        autoClose: 3000,
+      });
       
       // Reset animation after completion
       setTimeout(() => {
@@ -83,9 +92,19 @@ export default function Shop() {
       }, 1000);
       
     } catch (error) {
-      console.error("Error adding to cart:", error);
-      showNotification('Failed to add to cart', 'error');
       setCartAnimation(null);
+      if (error.response && error.response.status === 401) {
+        toast.error('Please login to add items to cart', {
+          position: "top-center",
+          autoClose: 3000,
+        });
+        navigate('/customer/login');
+      } else {
+        toast.error('Failed to add to cart. Please try again.', {
+          position: "top-center",
+          autoClose: 3000,
+        });
+      }
     }
   };
 
@@ -110,25 +129,21 @@ export default function Shop() {
     return <div className="flex justify-center">{stars}</div>;
   };
 
-  // Toast notification
-  const showNotification = (message, type) => {
-    const notification = document.createElement('div');
-    notification.className = `fixed top-20 right-5 p-4 rounded-lg shadow-lg z-50 ${
-      type === 'success' ? 'bg-green-600' : 'bg-red-600'
-    } text-white transition-opacity duration-500`;
-    notification.textContent = message;
-    document.body.appendChild(notification);
-
-    setTimeout(() => {
-      notification.style.opacity = '0';
-      setTimeout(() => {
-        document.body.removeChild(notification);
-      }, 500);
-    }, 3000);
-  };
-
   return (
     <div className="bg-gray-50 min-h-screen">
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      
       <div className="mx-auto w-full max-w-7xl">
         <header className="text-center py-10">
           <h1 className="text-4xl font-bold text-gray-800">MediQuick</h1>
@@ -279,7 +294,6 @@ export default function Shop() {
             </div>
           </>
         )}
-
       </div>
     </div>
   );

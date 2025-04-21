@@ -29,8 +29,10 @@ import MedicineDetail from './components/Pharmacy/MedicineDetail';
 import AddMedicine from "./components/Pharmacy/AddMedicine";
 import IsLoggedIn from "./IsLoggedIn";
 import React from "react";
+import { ToastContainer } from "react-toastify";
 function App() {
-  return (    
+  return (   
+    <> 
     <BrowserRouter>
         <Routes>
           <Route element={<IsLoggedIn />}>
@@ -83,6 +85,8 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
+        <ToastContainer />
+      </>
     );
 }
 
