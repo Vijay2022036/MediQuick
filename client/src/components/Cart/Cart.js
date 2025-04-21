@@ -112,8 +112,9 @@ const Cart = () => {
 
   // Function to check and mark items that exceed available stock
   const checkExceedsStock = (items, stockData) => {
+    // FIXED: Use productId instead of _id when checking stock data
     const exceedingItems = items.filter(item => {
-      const availableStock = stockData[item._id.toString()] || 0;
+      const availableStock = stockData[item.productId.toString()] || 0;
       return item.quantity > availableStock;
     });
     
@@ -122,7 +123,8 @@ const Cart = () => {
       
       // Show notification for items exceeding stock
       exceedingItems.forEach(item => {
-        const availableStock = stockData[item._id.toString()] || 0;
+        // FIXED: Use productId instead of _id
+        const availableStock = stockData[item.productId.toString()] || 0;
         toast.warning(
           `${item.name} has only ${availableStock} units in stock (you have ${item.quantity} in cart)`,
           { autoClose: 5000 }
@@ -141,6 +143,7 @@ const Cart = () => {
     if (!currentItem) return;
     
     // Check if new quantity exceeds available stock
+    // FIXED: Use productId.toString() to access stockInfo
     const availableStock = stockInfo[currentItem.productId.toString()] || 0;
     
     // Update UI immediately for better UX
@@ -371,9 +374,10 @@ const Cart = () => {
 
   // Function to get the stock status for an item
   const getStockStatus = (item) => {
-    if (!stockInfo[item.productId]) return null;
+    // FIXED: Use productId.toString() to access stockInfo
+    if (!stockInfo[item.productId.toString()]) return null;
     
-    const availableStock = stockInfo[item.productId];
+    const availableStock = stockInfo[item.productId.toString()];
     
     if (item.quantity > availableStock) {
       return {
