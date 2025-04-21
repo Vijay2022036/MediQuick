@@ -88,7 +88,7 @@ function AdminDashboard() {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        body: ({ timeRange })
+        body: JSON.stringify({ timeRange })
         
       });
       
