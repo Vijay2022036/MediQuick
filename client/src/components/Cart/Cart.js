@@ -109,11 +109,11 @@ const Cart = () => {
       console.error('Failed to fetch stock information:', err);
     }
   };
-
+  
   // Function to check and mark items that exceed available stock
   const checkExceedsStock = (items, stockData) => {
-    // FIXED: Use productId instead of _id when checking stock data
     const exceedingItems = items.filter(item => {
+      // Use productId instead of _id to check stock
       const availableStock = stockData[item.productId.toString()] || 0;
       return item.quantity > availableStock;
     });
@@ -123,7 +123,6 @@ const Cart = () => {
       
       // Show notification for items exceeding stock
       exceedingItems.forEach(item => {
-        // FIXED: Use productId instead of _id
         const availableStock = stockData[item.productId.toString()] || 0;
         toast.warning(
           `${item.name} has only ${availableStock} units in stock (you have ${item.quantity} in cart)`,
@@ -135,6 +134,34 @@ const Cart = () => {
     }
   };
 
+  const getStockStatus = (item) => {
+    // Use productId instead of _id
+    if (!stockInfo[item.productId.toString()]) return null;
+    
+    const availableStock = stockInfo[item.productId.toString()];
+    
+    if (item.quantity > availableStock) {
+      return {
+        exceeds: true,
+        available: availableStock
+      };
+    }
+    
+    if (availableStock <= 5) {
+      return {
+        exceeds: false,
+        available: availableStock,
+        lowStock: true
+      };
+    }
+    
+    return {
+      exceeds: false,
+      available: availableStock
+    };
+  };
+  
+  // Update handleQuantityChange function to use productId for stock checking
   const handleQuantityChange = async (itemId, quantity) => {
     if (quantity < 1) return;
     
@@ -143,7 +170,6 @@ const Cart = () => {
     if (!currentItem) return;
     
     // Check if new quantity exceeds available stock
-    // FIXED: Use productId.toString() to access stockInfo
     const availableStock = stockInfo[currentItem.productId.toString()] || 0;
     
     // Update UI immediately for better UX
@@ -186,6 +212,7 @@ const Cart = () => {
       toast.error('Failed to update item quantity');
     }
   };
+  
 
   const handleRemoveItem = async (itemId) => {
     try {
@@ -370,34 +397,6 @@ const Cart = () => {
     if (currentQuantity > 1) {
       handleQuantityChange(itemId, currentQuantity - 1);
     }
-  };
-
-  // Function to get the stock status for an item
-  const getStockStatus = (item) => {
-    // FIXED: Use productId.toString() to access stockInfo
-    if (!stockInfo[item.productId.toString()]) return null;
-    
-    const availableStock = stockInfo[item.productId.toString()];
-    
-    if (item.quantity > availableStock) {
-      return {
-        exceeds: true,
-        available: availableStock
-      };
-    }
-    
-    if (availableStock <= 5) {
-      return {
-        exceeds: false,
-        available: availableStock,
-        lowStock: true
-      };
-    }
-    
-    return {
-      exceeds: false,
-      available: availableStock
-    };
   };
 
   if (loading) {
