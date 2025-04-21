@@ -146,10 +146,10 @@ const generateReport = async (req, res) => {
     // For simplicity, returning JSON here
     const csv = orders.map(order => ({
       OrderID: order._id,
-      CustomerName: order.customerName,
-      PharmacyName: order.pharmacyName,
-      TotalAmount: order.totalAmount,
+      CustomerName: order.customer.name,
+      TotalAmount: order.totalPrice,
       Status: order.status,
+      PaymentStatus: order.paymentStatus ? 'Paid' : 'Pending',
       OrderDate: order.orderDate,
     }));
 
