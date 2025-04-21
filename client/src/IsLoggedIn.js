@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 

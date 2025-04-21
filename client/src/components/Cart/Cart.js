@@ -14,7 +14,8 @@ import {
   ChevronUp,
   X,
   Check,
-  Loader
+  Loader,
+  AlertTriangle
 } from 'lucide-react';
 
 const Cart = () => {
@@ -33,6 +34,8 @@ const Cart = () => {
     phone: ''
   });
   const [addressError, setAddressError] = useState('');
+  const [stockInfo, setStockInfo] = useState({});
+  const [exceedsStockItems, setExceedsStockItems] = useState([]);
 
   useEffect(() => {
     const userData = localStorage.getItem('user');
@@ -56,6 +59,9 @@ const Cart = () => {
 
         if (res.data.success) {
           setCartItems(res.data.cartData);
+          
+          // Fetch stock information for all cart items
+          await fetchStockInfo(res.data.cartData);
         } else {
           setError('Failed to load cart items');
           toast.error('Failed to load cart items');
@@ -71,8 +77,94 @@ const Cart = () => {
     fetchCartItems();
   }, []);
 
+  // Function to fetch stock information for all cart items
+  const fetchStockInfo = async (items) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token || !items.length) return;
+      
+      // Get product IDs from cart items
+      const productIds = items.map(item => item.productId);
+      
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/api/medicines/stock-info`,
+        { medicineIds: productIds },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
+      
+      if (res.data.success) {
+        const stockData = res.data.stockInfo;
+        setStockInfo(stockData);
+        
+        // Check if any items exceed available stock
+        checkExceedsStock(items, stockData);
+      }
+    } catch (err) {
+      console.error('Failed to fetch stock information:', err);
+    }
+  };
+
+  // Function to check and mark items that exceed available stock
+  const checkExceedsStock = (items, stockData) => {
+    const exceedingItems = items.filter(item => {
+      const availableStock = stockData[item._id] || 0;
+      return item.quantity > availableStock;
+    });
+    
+    if (exceedingItems.length > 0) {
+      setExceedsStockItems(exceedingItems.map(item => item._id));
+      
+      // Show notification for items exceeding stock
+      exceedingItems.forEach(item => {
+        const availableStock = stockData[item._id] || 0;
+        toast.warning(
+          `${item.name} has only ${availableStock} units in stock (you have ${item.quantity} in cart)`,
+          { autoClose: 5000 }
+        );
+      });
+    } else {
+      setExceedsStockItems([]);
+    }
+  };
+
   const handleQuantityChange = async (itemId, quantity) => {
     if (quantity < 1) return;
+    
+    // Find the current item
+    const currentItem = cartItems.find(item => item._id === itemId);
+    if (!currentItem) return;
+    
+    // Check if new quantity exceeds available stock
+    const availableStock = stockInfo[currentItem.productId] || 0;
+    
+    // Update UI immediately for better UX
+    setCartItems(prev =>
+      prev.map(item =>
+        item._id === itemId ? { ...item, quantity } : item
+      )
+    );
+    
+    // Check if exceeding stock after UI update
+    if (quantity > availableStock) {
+      setExceedsStockItems(prev => 
+        prev.includes(itemId) ? prev : [...prev, itemId]
+      );
+      
+      toast.warning(
+        `Only ${availableStock} units of this item are available in stock`,
+        { autoClose: 3000 }
+      );
+    } else {
+      setExceedsStockItems(prev => 
+        prev.filter(id => id !== itemId)
+      );
+    }
     
     try {
       const token = localStorage.getItem('token');
@@ -86,12 +178,6 @@ const Cart = () => {
             Authorization: `Bearer ${token}`,
           },
         }
-      );
-      
-      setCartItems(prev =>
-        prev.map(item =>
-          item._id === itemId ? { ...item, quantity } : item
-        )
       );
     } catch (err) {
       toast.error('Failed to update item quantity');
@@ -113,6 +199,7 @@ const Cart = () => {
       );
       
       setCartItems(prev => prev.filter(item => item._id !== itemId));
+      setExceedsStockItems(prev => prev.filter(id => id !== itemId));
       toast.success('Item removed from cart');
     } catch (err) {
       toast.error('Failed to remove item from cart');
@@ -160,6 +247,15 @@ const Cart = () => {
 
   const handleCheckout = async () => {
     if (!validateAddress()) return;
+    
+    // Check if any items exceed stock before proceeding
+    if (exceedsStockItems.length > 0) {
+      toast.error('Please adjust quantities for items exceeding available stock before checkout', {
+        position: "top-center",
+        autoClose: 5000
+      });
+      return;
+    }
 
     const toastId = toast.loading('Processing your order...');
     
@@ -273,6 +369,33 @@ const Cart = () => {
     }
   };
 
+  // Function to get the stock status for an item
+  const getStockStatus = (item) => {
+    if (!stockInfo[item.productId]) return null;
+    
+    const availableStock = stockInfo[item.productId];
+    
+    if (item.quantity > availableStock) {
+      return {
+        exceeds: true,
+        available: availableStock
+      };
+    }
+    
+    if (availableStock <= 5) {
+      return {
+        exceeds: false,
+        available: availableStock,
+        lowStock: true
+      };
+    }
+    
+    return {
+      exceeds: false,
+      available: availableStock
+    };
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -305,56 +428,101 @@ const Cart = () => {
         </div>
       ) : (
         <div className="space-y-6">
-          <div className="space-y-4 mb-8">
-            {cartItems.map((item) => (
-              <div
-                key={item._id}
-                className="flex flex-col sm:flex-row sm:items-center justify-between border rounded-lg p-4 hover:shadow-md transition-shadow"
-              >
-                <div className="flex items-center gap-4">
-                  <img
-                    src={item.image || '/placeholder.png'}
-                    alt={item.name}
-                    className="w-20 h-20 object-contain border rounded-md"
-                  />
-                  <div>
-                    <h2 className="text-xl font-semibold text-gray-700">{item.name}</h2>
-                    <p className="text-gray-500">₹{item.price}</p>
-                  </div>
+          {exceedsStockItems.length > 0 && (
+            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4 rounded">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <AlertTriangle className="h-5 w-5 text-yellow-500" />
                 </div>
-
-                <div className="flex items-center mt-4 sm:mt-0 gap-4">
-                  <div className="flex items-center border rounded-md overflow-hidden">
-                    <button 
-                      onClick={() => decrementQuantity(item._id, item.quantity)}
-                      className="px-2 py-1 hover:bg-gray-100"
-                      disabled={item.quantity <= 1}
-                    >
-                      <Minus className="h-4 w-4 text-gray-600" />
-                    </button>
-                    <input
-                      type="number"
-                      min="1"
-                      value={item.quantity}
-                      onChange={(e) => handleQuantityChange(item._id, parseInt(e.target.value, 10))}
-                      className="w-12 py-1 border-x text-center focus:outline-none"
-                    />
-                    <button 
-                      onClick={() => incrementQuantity(item._id, item.quantity)}
-                      className="px-2 py-1 hover:bg-gray-100"
-                    >
-                      <Plus className="h-4 w-4 text-gray-600" />
-                    </button>
-                  </div>
-                  <button
-                    onClick={() => handleRemoveItem(item._id)}
-                    className="text-red-600 p-1 rounded-full hover:bg-red-50"
-                  >
-                    <Trash2 className="h-5 w-5" />
-                  </button>
+                <div className="ml-3">
+                  <p className="text-sm text-yellow-700">
+                    Some items in your cart exceed available stock. Please adjust quantities before checkout.
+                  </p>
                 </div>
               </div>
-            ))}
+            </div>
+          )}
+          
+          <div className="space-y-4 mb-8">
+            {cartItems.map((item) => {
+              const stockStatus = getStockStatus(item);
+              const isExceeding = exceedsStockItems.includes(item._id);
+              
+              return (
+                <div
+                  key={item._id}
+                  className={`flex flex-col sm:flex-row sm:items-center justify-between border rounded-lg p-4 hover:shadow-md transition-shadow ${
+                    isExceeding ? 'border-red-300 bg-red-50' : ''
+                  }`}
+                >
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={item.image || '/placeholder.png'}
+                      alt={item.name}
+                      className="w-20 h-20 object-contain border rounded-md"
+                    />
+                    <div>
+                      <h2 className="text-xl font-semibold text-gray-700">{item.name}</h2>
+                      <p className="text-gray-500">₹{item.price}</p>
+                      
+                      {stockStatus && (
+                        <div className="mt-1">
+                          {stockStatus.exceeds ? (
+                            <p className="text-xs text-red-600 font-medium flex items-center">
+                              <AlertTriangle className="h-3 w-3 mr-1" />
+                              Only {stockStatus.available} in stock (you have {item.quantity})
+                            </p>
+                          ) : stockStatus.lowStock ? (
+                            <p className="text-xs text-orange-600 font-medium">
+                              Only {stockStatus.available} left in stock
+                            </p>
+                          ) : (
+                            <p className="text-xs text-green-600 font-medium">
+                              In stock ({stockStatus.available} available)
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center mt-4 sm:mt-0 gap-4">
+                    <div className={`flex items-center border rounded-md overflow-hidden ${
+                      isExceeding ? 'border-red-300' : ''
+                    }`}>
+                      <button 
+                        onClick={() => decrementQuantity(item._id, item.quantity)}
+                        className="px-2 py-1 hover:bg-gray-100"
+                        disabled={item.quantity <= 1}
+                      >
+                        <Minus className="h-4 w-4 text-gray-600" />
+                      </button>
+                      <input
+                        type="number"
+                        min="1"
+                        value={item.quantity}
+                        onChange={(e) => handleQuantityChange(item._id, parseInt(e.target.value, 10))}
+                        className={`w-12 py-1 border-x text-center focus:outline-none ${
+                          isExceeding ? 'bg-red-50 text-red-700' : ''
+                        }`}
+                      />
+                      <button 
+                        onClick={() => incrementQuantity(item._id, item.quantity)}
+                        className="px-2 py-1 hover:bg-gray-100"
+                      >
+                        <Plus className="h-4 w-4 text-gray-600" />
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => handleRemoveItem(item._id)}
+                      className="text-red-600 p-1 rounded-full hover:bg-red-50"
+                    >
+                      <Trash2 className="h-5 w-5" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
           <div className="bg-gray-50 p-4 rounded-lg">
@@ -482,12 +650,18 @@ const Cart = () => {
           <button 
             onClick={handleCheckout} 
             className="w-full mt-6 px-6 py-3 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition duration-200 flex items-center justify-center disabled:opacity-50"
-            disabled={cartItems.length === 0}
+            disabled={cartItems.length === 0 || exceedsStockItems.length > 0}
           >
             <CreditCard className="h-5 w-5 mr-2" />
             Proceed to Payment
             <ArrowRight className="h-5 w-5 ml-2" />
           </button>
+          
+          {exceedsStockItems.length > 0 && (
+            <p className="text-center text-sm text-red-600 mt-2">
+              Please adjust quantities for items exceeding stock before checkout
+            </p>
+          )}
         </div>
       )}
     </div>

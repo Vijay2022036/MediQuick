@@ -13,13 +13,13 @@ const razorpayInstance = new Razorpay({
 
 const createOrder = async (req, res) => {
   try {
-    // Extract delivery address from request body
     const { deliveryAddress } = req.body;
-    
-    // Validate delivery address
-    if (!deliveryAddress || !deliveryAddress.fullName || !deliveryAddress.addressLine1 || 
-        !deliveryAddress.city || !deliveryAddress.state || !deliveryAddress.zipCode || 
-        !deliveryAddress.phone) {
+
+    if (
+      !deliveryAddress || !deliveryAddress.fullName || !deliveryAddress.addressLine1 || 
+      !deliveryAddress.city || !deliveryAddress.state || !deliveryAddress.zipCode || 
+      !deliveryAddress.phone
+    ) {
       return res.status(400).json({ 
         success: false, 
         message: 'Complete delivery address information is required' 
@@ -33,6 +33,23 @@ const createOrder = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Cart is empty' });
     }
 
+    // Check if requested quantity exceeds stock
+    for (const item of cartItems) {
+      if (!item.medicine) {
+        return res.status(400).json({ 
+          success: false, 
+          message: `Some medicines in cart are no longer available.` 
+        });
+      }
+
+      if (item.quantity > item.medicine.stockQuantity) {
+        return res.status(400).json({
+          success: false,
+          message: `Requested quantity for "${item.medicine.name}" exceeds available stock (${item.medicine.stockQuantity})`
+        });
+      }
+    }
+
     const totalAmount = cartItems.reduce(
       (acc, item) => acc + item.medicine.price * item.quantity,
       0
@@ -42,12 +59,11 @@ const createOrder = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid total amount' });
     }
 
-    // Store delivery address temporarily in session or user document
     user.tempDeliveryAddress = deliveryAddress;
     await user.save();
 
     const options = {
-      amount: Math.round(totalAmount * 100), // Razorpay expects amount in paise
+      amount: Math.round(totalAmount * 100),
       currency: 'INR',
       receipt: `order_rcptid_${user._id}`,
       notes: {

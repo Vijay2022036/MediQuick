@@ -76,6 +76,8 @@ const deleteMedicine = async (req, res, next) => {
   }
 };
 
+
+
 module.exports = {
   getAllMedicines,
   getMedicineById,
