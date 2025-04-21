@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { registerPharmacy, loginPharmacy, verifyPharmacy } = require('../controllers/pharmacyAuthController');
 const Medicine = require('../models/Medicine')
-const { protect } = require('./../middleware');
+const { protect, pharmacy , admin } = require('./../middleware');
 const Pharmacy = require('../models/Pharmacy');
 router.post('/register', async (req, res, next) => {
     try {
@@ -21,7 +21,7 @@ router.post('/login', async (req, res, next) => {
     }
 });
 
-router.put('/verify/:id', protect , async (req, res, next) => {
+router.put('/verify/:id', protect , admin , async (req, res, next) => {
     try {
         await verifyPharmacy(req, res);
     } catch (err) {
@@ -30,7 +30,7 @@ router.put('/verify/:id', protect , async (req, res, next) => {
 });
 
 // GET all pharmacies
-router.get('/', protect , async (req, res) => {
+router.get('/', protect , admin , async (req, res) => {
     try {
         const pharmacies = await Pharmacy.find();
         res.json(pharmacies);
@@ -40,7 +40,7 @@ router.get('/', protect , async (req, res) => {
     }
 });
 // DELETE pharmacy
-router.delete('/delete/:id', protect , async (req, res) => {
+router.delete('/delete/:id', protect , admin , async (req, res) => {
     try {
         const pharmacy = await Pharmacy.findByIdAndDelete(req.params.id);
         if (!pharmacy) {
@@ -55,7 +55,7 @@ router.delete('/delete/:id', protect , async (req, res) => {
     }
 });
 // routes/pharmacy.js
-router.get('/medicines' , protect , async (req, res) => {
+router.get('/medicines' , protect , pharmacy , async (req, res) => {
     try {
       const pharmacyId = req.user._id;
        console.log('Pharmacy ID:', pharmacyId);

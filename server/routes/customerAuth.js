@@ -55,7 +55,7 @@ router.get('/profile', auth.protect , async (req, res) => {
 });
 
 // PUT profile
-router.put('/profile', auth.protect, async (req, res) => {
+router.put('/profile', auth.protect,  async (req, res) => {
   try {
     const { name, email } = req.body;
 

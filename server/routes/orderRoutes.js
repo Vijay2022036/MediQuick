@@ -1,6 +1,6 @@
 const express = require('express');
 const orderRouter = express.Router();
-const { protect, pharmacy } = require('./../middleware');
+const { protect, admin} = require('./../middleware');
 const { 
   getAllOrders,
   getUserOrders,
@@ -36,7 +36,7 @@ orderRouter.get('/:id', protect, async (req, res, next) => {
 });
 
 
-orderRouter.put('/status/:id', protect, pharmacy, async (req, res, next) => {
+orderRouter.put('/status/:id', protect , admin ,async (req, res, next) => {
   try {
     await updateOrderStatus(req, res);
   } catch (err) {

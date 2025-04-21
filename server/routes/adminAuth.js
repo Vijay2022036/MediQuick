@@ -3,7 +3,7 @@ const router = express.Router();
 const { registerAdmin, loginAdmin , dashboardStats , getProfile , updateStatus} = require('../controllers/adminAuthController');
 const Order = require('../models/Order');
 const Pharmacy = require('../models/Pharmacy');
-const {protect} = require('../middleware');
+const {protect , admin} = require('../middleware');
 
 router.post('/register',  async (req, res, next) => {
     try {
@@ -21,7 +21,7 @@ router.post('/login', async (req, res, next) => {
     }
 });
 
-router.get('/orders', protect , async (req, res, next) => {
+router.get('/orders', protect , admin , async (req, res, next) => {
     try {
         const orders = await Order.find();
         res.json(orders);
@@ -30,7 +30,7 @@ router.get('/orders', protect , async (req, res, next) => {
     }
 });
 
-router.get('/approval', protect , async (req, res, next) => {
+router.get('/approval', protect , admin , async (req, res, next) => {
     try {
         const pendingApprovals = await Pharmacy.find({ verified: false });
         res.json(pendingApprovals);
@@ -39,7 +39,7 @@ router.get('/approval', protect , async (req, res, next) => {
     }
 });
 
-router.get('/profile', protect , getProfile);
-router.get('/dashboard-stats', protect , dashboardStats );
-router.put('/orders/status/:orderId', protect , updateStatus );
+router.get('/profile', protect , admin , getProfile);
+router.get('/dashboard-stats', protect , admin , dashboardStats );
+router.put('/orders/status/:orderId', protect , admin , updateStatus );
 module.exports = router;
