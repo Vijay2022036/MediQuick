@@ -434,7 +434,14 @@ export default function Header() {
                                     </Link>
                                 </div>
                             )}
-                           
+                           <div className="flex justify-center">
+                                <button
+                                    onClick={handleLogout}
+                                    className="text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 transition duration-200 focus:outline-none"
+                                >
+                                    Logout
+                                </button>
+                            </div>
                         </div>
                     )}
                 </div>
