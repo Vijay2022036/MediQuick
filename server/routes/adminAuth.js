@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { registerAdmin, loginAdmin , dashboardStats , getProfile , updateStatus} = require('../controllers/adminAuthController');
+const { registerAdmin, loginAdmin , dashboardStats , getProfile , updateStatus , generateReport} = require('../controllers/adminAuthController');
 const Order = require('../models/Order');
 const Pharmacy = require('../models/Pharmacy');
 const {protect , admin} = require('../middleware');
@@ -39,6 +39,16 @@ router.get('/approval', protect , admin , async (req, res, next) => {
     }
 });
 
+router.get('/export-report', protect , admin , async (req, res, next) => {
+    try {
+        const reportData = await generateReport(req.query.timeRange);
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', 'attachment; filename=admin-report.csv');
+        res.send(reportData);
+    } catch (error) {
+        next(error);
+    }
+})
 router.get('/profile', protect , admin , getProfile);
 router.get('/dashboard-stats', protect , admin , dashboardStats );
 router.put('/orders/status/:orderId', protect , admin , updateStatus );

@@ -83,16 +83,15 @@ function AdminDashboard() {
 
   const exportReport = async () => {
     try {
-      const response = await axios.get('${process.env.REACT_APP_API_BASE_URL}/api/admin/export-report', {
-        params: { timeRange },
-        responseType: 'blob',
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/admin/export-report`, {
+        method: 'GET',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
       
       // Create a download link and trigger download
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const url = window.URL.createObjectURL(new Blob([await response.blob()]));
       const link = document.createElement('a');
       link.href = url;
       const date = new Date().toISOString().split('T')[0];
@@ -212,6 +211,12 @@ function AdminDashboard() {
         <main className="flex-1 overflow-y-auto bg-gray-100 p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-semibold text-gray-800">Dashboard Overview</h2>
+            <button 
+              onClick={exportReport} 
+              className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            >
+              Export Report
+            </button>
           </div>
           
           {loading ? (

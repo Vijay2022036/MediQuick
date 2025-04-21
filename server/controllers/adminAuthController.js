@@ -116,4 +116,54 @@ const updateStatus = async (req, res, next) => {
   }
 };
 
-module.exports = { registerAdmin, loginAdmin , dashboardStats , getProfile , updateStatus};
+const generateReport = async (req, res) => {
+  try {
+    const { timeRange } = req.query;
+    let startDate, endDate;
+
+    if (timeRange === 'daily') {
+      startDate = new Date();
+      startDate.setHours(0, 0, 0, 0);
+      endDate = new Date();
+      endDate.setHours(23, 59, 59, 999);
+    } else if (timeRange === 'weekly') {
+      startDate = new Date();
+      startDate.setDate(startDate.getDate() - 7);
+      endDate = new Date();
+    } else if (timeRange === 'monthly') {
+      startDate = new Date();
+      startDate.setMonth(startDate.getMonth() - 1);
+      endDate = new Date();
+    } else {
+      return res.status(400).json({ message: 'Invalid time range' });
+    }
+
+    const orders = await Order.find({
+      orderDate: { $gte: startDate, $lte: endDate },
+    });
+
+    // Generate CSV or any other report format
+    // For simplicity, returning JSON here
+    const csv = orders.map(order => ({
+      OrderID: order._id,
+      CustomerName: order.customerName,
+      PharmacyName: order.pharmacyName,
+      TotalAmount: order.totalAmount,
+      Status: order.status,
+      OrderDate: order.orderDate,
+    }));
+
+    const csvHeaders = Object.keys(csv[0]).join(',');
+    const csvRows = csv.map(row => Object.values(row).join(',')).join('\n');
+    const csvContent = `${csvHeaders}\n${csvRows}`;
+
+    res.header('Content-Type', 'text/csv');
+    res.attachment('report.csv');
+    res.send(csvContent);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+}; 
+
+module.exports = { registerAdmin, loginAdmin , dashboardStats , getProfile , updateStatus , generateReport };
