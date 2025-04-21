@@ -10,9 +10,7 @@ const port = process.env.PORT || 3000;
 
 const cors = require('cors');
 app.use(cors({
-  origin: 'https://medi-quick-vk36.vercel.app', // Replace with your frontend URL
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
+  
 }));
 
 app.use(express.json());
