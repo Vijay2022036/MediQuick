@@ -150,7 +150,7 @@ const generateReport = async (req, res) => {
       TotalAmount: order.totalPrice,
       OrderDate: order.orderDate,
     }));
-
+    console.log(csv);
     const csvHeaders = Object.keys(csv[0]).join(',');
     const csvRows = csv.map(row => Object.values(row).join(',')).join('\n');
     const csvContent = `${csvHeaders}\n${csvRows}`;
