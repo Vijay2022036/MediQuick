@@ -5,10 +5,10 @@ const Pharmacy = require('./models/Pharmacy');
 
 const protect = async (req, res, next) => {
   try {
-    
     const token = req.header('Authorization')?.replace('Bearer ', '');
 
     if (!token) {
+      alert('Not authorized , please login');
       return res.status(401).json({ error: 'Not authorized, no token' });
     }
 
@@ -50,9 +50,11 @@ const admin = (req, res, next) => {
 
 const pharmacy = (req, res, next) => {
   if (req.user.role !== 'pharmacy') {
+    alert('Access denied: Pharmacy only');
     return res.status(403).json({ error: 'Access denied: Pharmacy only' });
   }
   if (!req.user.verified) {
+    alert('Access denied: Pharmacy not verified');
     return res.status(403).json({ error: 'Access denied: Pharmacy not verified' });
   }
   next();
@@ -60,6 +62,7 @@ const pharmacy = (req, res, next) => {
 
 const customer = (req, res, next) => {
   if (req.user.role !== 'customer') {
+    alert('Access denied: Customer only');
     return res.status(403).json({ error: 'Access denied: Customer only' });
   }
   next();
