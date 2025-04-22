@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 
 function AddMedicine() {
@@ -29,13 +30,14 @@ function AddMedicine() {
     const token = getToken();
 
     if (!token) {
-      toast.error('You are not logged in');
+      toast.error('You are not logged in', {
+        position: "top-center",
+        autoClose: 3000,
+      });
       return;
     }
 
     try {
-      // formData.pharmacy = JSON.parse(localStorage.getItem('user'))._id; // Assuming pharmacy is available in the context or state
-      // console.log('Form data:', formData); // Debugging line
       const apiUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3000';
       let res;
       try {
@@ -47,25 +49,68 @@ function AddMedicine() {
           },
           body: JSON.stringify(formData),
         });
-      } catch (networkError) {
+
+      } catch (error) {
         throw new Error('Network error: Unable to reach the server');
       }
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data?.message || 'Failed to add medicine');
+        if (res.status === 400) {
+          toast.error('Bad Request: Please check your input', {
+            position: "top-center",
+            autoClose: 3000,
+          });
+        } else if (res.status === 500) {
+          toast.error('Server error: Please try again later', {
+            position: "top-center",
+            autoClose: 3000,
+          });
+        } else {
+          toast.error(data.message || 'An error occurred', {
+            position: "top-center",
+            autoClose: 3000,
+          });
+        }
+        return;
       }
 
-      toast.success('Medicine added successfully');
+      toast.success('Medicine added successfully', {
+        position: "top-center",
+        autoClose: 3000,
+      });
       navigate('/pharmacy/dashboard');
-    } catch (err) {
-      toast.error(err.message || 'Error adding medicine');
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        toast.error('Please login to add medicines to store', {
+          position: "top-center",
+          autoClose: 3000,
+        });
+        navigate('/pharmacy/login');
+      } else {
+        toast.error('Only pharmacies can ADD medicines.', {
+          position: "top-center",
+          autoClose: 3000,
+        });
+      }
     }
   };
 
   return (
     <div className="max-w-2xl mx-auto p-6">
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       <h2 className="text-2xl font-bold mb-4">Add New Medicine</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         {['name', 'description', 'composition', 'category', 'batchNumber', 'image'].map((field) => (

@@ -81,7 +81,7 @@ export default function Shop() {
         }
       );
       
-          toast.success(`${quantity} ${medicine.name} added to cart`, {
+        toast.success(`${quantity} ${medicine.name} added to cart`, {
           position: "top-center",
           autoClose: 3000,
         });
