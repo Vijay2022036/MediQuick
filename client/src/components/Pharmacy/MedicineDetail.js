@@ -139,17 +139,29 @@ function MedicineDetail() {
       );
       
       if (response.data.success) {
-        showNotification('Added to cart successfully!', 'success');
+         toast.success(`${quantity} ${medicine.name} added to cart`, {
+          position: "top-center",
+          autoClose: 3000,
+        });
       } else {
-        showNotification('Failed to add to cart.', 'error');
+        toast.error('Failed to add to cart.', {
+          position: "top-center",
+          autoClose: 3000,
+        });
       }
     } catch (error) {
       console.error("Error adding to cart:", error);
       if (error.response && error.response.status === 401) {
-        showNotification('Please login to add items to cart');
+        toast.error('Please login to add items to cart', {
+            position: "top-center",
+            autoClose: 3000,
+          });
         navigate('/customer/login');
       } else {
-        showNotification('Only customers can ADD to cart.');
+       toast.error('Only customers can ADD to cart.', {
+          position: "top-center",
+          autoClose: 3000,
+        });
       }
     } finally {
       setIsAddingToCart(false);
@@ -161,51 +173,6 @@ function MedicineDetail() {
       ...prev,
       [reviewId]: !prev[reviewId]
     }));
-  };
-  
-  const showNotification = (message, type) => {
-    // Create toast container if it doesn't exist
-    let toastContainer = document.getElementById('toast-container');
-    
-    if (!toastContainer) {
-      toastContainer = document.createElement('div');
-      toastContainer.id = 'toast-container';
-      toastContainer.className = 'fixed inset-x-0 top-1/4 flex justify-center items-center z-50 pointer-events-none';
-      document.body.appendChild(toastContainer);
-    }
-    
-    // Create toast element
-    const toast = document.createElement('div');
-    toast.className = `py-3 px-4 rounded-lg shadow-lg ${
-      type === 'success' ? 'bg-green-600' : 'bg-red-600'
-    } text-white max-w-md mx-auto opacity-0 transition-opacity duration-300 transform translate-y-2`;
-    
-    // Add message
-    toast.textContent = message;
-    
-    // Add to container
-    toastContainer.appendChild(toast);
-    
-    // Trigger entrance animation
-    setTimeout(() => {
-      toast.classList.remove('opacity-0', 'translate-y-2');
-      toast.classList.add('opacity-100', 'translate-y-0');
-    }, 10);
-    
-    // Remove after delay
-    setTimeout(() => {
-      toast.classList.remove('opacity-100', 'translate-y-0');
-      toast.classList.add('opacity-0', 'translate-y-2');
-      
-      setTimeout(() => {
-        toastContainer.removeChild(toast);
-        
-        // Remove container if empty
-        if (toastContainer.childNodes.length === 0) {
-          document.body.removeChild(toastContainer);
-        }
-      }, 300);
-    }, 3000);
   };
   
   // Star Rating component
