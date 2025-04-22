@@ -292,7 +292,7 @@ function CustomerProfile() {
            
             <Button 
               onClick={handleLogout}
-              className="flex items-center justify-center gap-2 bg-red-100 text-red-700 hover:bg-red-200"
+              className="flex items-center justify-center gap-2 bg-white text-gray-600 hover:bg-red-100"
             >
               <LogOutIcon size={16} />
               Log Out
