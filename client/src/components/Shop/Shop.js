@@ -144,31 +144,31 @@ export default function Shop() {
         theme="light"
       />
       
-      <div className="mx-auto w-full px-2 sm:px-4 lg:px-6 max-w-7xl">
-        <header className="text-center py-6 md:py-10">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800">MediQuick</h1>
-          <p className="text-sm sm:text-base md:text-lg mt-1 sm:mt-2 text-gray-600">Your trusted source for quality medicines</p>
-          <div className="relative mt-4 sm:mt-6 md:mt-8 max-w-md sm:max-w-xl mx-auto px-2">
+      <div className="mx-auto w-full max-w-7xl">
+        <header className="text-center py-10">
+          <h1 className="text-4xl font-bold text-gray-800">MediQuick</h1>
+          <p className="text-lg mt-2 text-gray-600">Your trusted source for quality medicines</p>
+          <div className="relative mt-8 max-w-xl mx-auto">
             <input
               type="text"
               placeholder="Search for medicines..."
               value={searchTerm}
               onChange={handleSearchChange}
-              className="w-full px-4 py-2 pl-10 sm:px-5 sm:py-3 sm:pl-12 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm sm:text-base"
+              className="w-full px-5 py-3 pl-12 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
             />
-            <FiSearch className="absolute left-3 top-2.5 sm:left-4 sm:top-3.5 text-gray-400" size={18} />
+            <FiSearch className="absolute left-4 top-3.5 text-gray-400" size={20} />
           </div>
         </header>
 
         {loading ? (
-          <div className="flex justify-center py-10 sm:py-20">
-            <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-4 border-blue-500 border-t-transparent"></div>
+          <div className="flex justify-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
           </div>
         ) : error ? (
-          <div className="text-center text-red-500 py-6 sm:py-10 text-sm sm:text-lg bg-white rounded-lg shadow-sm mx-2 sm:mx-6 p-4 sm:p-6">
+          <div className="text-center text-red-500 py-10 text-lg bg-white rounded-lg shadow-sm mx-6 p-6">
             <p>Error: {error}</p>
             <button 
-              className="mt-3 sm:mt-4 px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-sm sm:text-base"
+              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
               onClick={() => window.location.reload()}
             >
               Try Again
@@ -176,24 +176,24 @@ export default function Shop() {
           </div>
         ) : (
           <>
-            <div className="flex justify-between items-center px-2 sm:px-4 mb-4 sm:mb-6">
-              <h2 className="text-base sm:text-lg md:text-xl font-semibold text-gray-700">
+            <div className="flex justify-between items-center px-6 mb-6">
+              <h2 className="text-xl font-semibold text-gray-700">
                 {filteredMedicines.length} Products
               </h2>
-              <div className="flex gap-1 sm:gap-2">
+              <div className="flex gap-2">
                 {/* Add sorting options here if needed */}
               </div>
             </div>
             
-            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 px-2 sm:px-4 pb-10 sm:pb-16">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-6 pb-16">
               {filteredMedicines.length > 0 ? (
                 filteredMedicines.map((medicine) => (
                   <div
                     key={medicine._id}
-                    className="bg-white border border-gray-100 rounded-xl sm:rounded-2xl shadow-sm hover:shadow-md transition duration-200 overflow-hidden flex flex-col"
+                    className="bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition duration-200 overflow-hidden flex flex-col"
                   >
                     <Link to={`/medicines/${medicine._id}`} className="block relative">
-                      <div className="w-full h-36 sm:h-40 md:h-48 flex items-center justify-center p-4 sm:p-6 bg-white relative overflow-hidden">
+                      <div className="w-full h-48 flex items-center justify-center p-6 bg-white relative overflow-hidden">
                         <img
                           src={medicine.image || '/placeholder.png'}
                           alt={medicine.name}
@@ -205,35 +205,35 @@ export default function Shop() {
                         />
                       </div>
                       {medicine.stockQuantity <= 5 && medicine.stockQuantity > 0 && (
-                        <div className="absolute top-1 right-1 sm:top-2 sm:right-2 bg-orange-500 text-white text-xs px-1 py-0.5 sm:px-2 sm:py-1 rounded">
+                        <div className="absolute top-2 right-2 bg-orange-500 text-white text-xs px-2 py-1 rounded">
                           Low Stock
                         </div>
                       )}
                     </Link>
                     
-                    <div className="p-3 sm:p-4 flex-grow flex flex-col justify-between">
+                    <div className="p-4 flex-grow flex flex-col justify-between">
                       <div>
                         <Link to={`/medicines/${medicine._id}`}>
-                          <h2 className="text-sm sm:text-base md:text-lg font-semibold text-gray-800 hover:text-blue-600 transition line-clamp-2 h-10 sm:h-12 mb-1">
+                          <h2 className="text-lg font-semibold text-gray-800 hover:text-blue-600 transition line-clamp-2 h-12 mb-1">
                             {medicine.name}
                           </h2>
                         </Link>
                         
-                        <div className="flex items-center justify-center mb-1 sm:mb-2">
+                        <div className="flex items-center justify-center mb-2">
                           <StarRating rating={medicine._id.length % 2 === 0 ? 4.5 : 4} />
                           <span className="text-xs text-gray-500 ml-1">
                             ({Math.floor(Math.random() * 100) + 20})
                           </span>
                         </div>
                         
-                        <p className="text-gray-600 text-xs sm:text-sm mb-1">
+                        <p className="text-gray-600 text-sm mb-1">
                           {medicine.category || 'General Medicine'}
                         </p>
                         
-                        <p className="text-base sm:text-lg font-semibold text-blue-600 mt-1 sm:mt-2">₹{medicine.price}</p>
+                        <p className="text-lg font-semibold text-blue-600 mt-2">₹{medicine.price}</p>
                       </div>
 
-                      <div className="mt-2 sm:mt-3 flex items-center gap-1 sm:gap-2">
+                      <div className="mt-3 flex items-center gap-2">
                         <div className="flex-1">
                           <input
                             type="number"
@@ -242,14 +242,14 @@ export default function Shop() {
                             max={medicine.stockQuantity}
                             value={quantities[medicine._id] || 1}
                             onChange={(e) => handleQuantityChange(medicine._id, e.target.value)}
-                            className="w-full px-1 py-1 sm:px-2 sm:py-1.5 text-center border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-xs sm:text-sm"
+                            className="w-full px-2 py-1.5 text-center border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                           />
                         </div>
                         
                         <button
                           onClick={() => handleCart(medicine._id)}
                           disabled={medicine.stockQuantity === 0}
-                          className={`flex-1 px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg transition-all flex items-center justify-center gap-1 text-xs sm:text-sm ${
+                          className={`flex-1 px-3 py-1.5 rounded-lg transition-all flex items-center justify-center gap-1 ${
                             medicine.stockQuantity === 0
                               ? 'bg-gray-300 cursor-not-allowed text-gray-500'
                               : cartAnimation === medicine._id
@@ -263,7 +263,7 @@ export default function Shop() {
                             'Out of Stock'
                           ) : (
                             <>
-                              <FiShoppingCart size={14} className="hidden xs:inline" />
+                              <FiShoppingCart size={16} />
                               <span>Add</span>
                             </>
                           )}
@@ -273,20 +273,20 @@ export default function Shop() {
                   </div>
                 ))
               ) : (
-                <div className="col-span-full bg-white rounded-lg shadow-sm p-6 sm:p-10 text-center">
+                <div className="col-span-full bg-white rounded-lg shadow-sm p-10 text-center">
                   <img 
                     src="/no-results.svg" 
                     alt="No results found" 
-                    className="w-24 h-24 sm:w-32 sm:h-32 mx-auto mb-3 sm:mb-4 opacity-60"
+                    className="w-32 h-32 mx-auto mb-4 opacity-60"
                     onError={(e) => {
                       e.target.onerror = null;
                       e.target.style.display = 'none';
                     }}
                   />
-                  <p className="text-gray-500 text-base sm:text-lg font-medium">
+                  <p className="text-gray-500 text-lg font-medium">
                     No matching products found.
                   </p>
-                  <p className="text-gray-400 mt-1 sm:mt-2 text-sm sm:text-base">
+                  <p className="text-gray-400 mt-2">
                     Try adjusting your search term or browse our categories.
                   </p>
                 </div>
