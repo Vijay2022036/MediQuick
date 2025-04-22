@@ -230,6 +230,19 @@ function MedicineDetail() {
   }
 
   return (
+    <div className="bg-white min-h-screen pb-16">
+        <ToastContainer
+          position="top-center"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
     <div className="bg-gray-50 min-h-screen pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
         {/* Breadcrumb */}
@@ -647,6 +660,7 @@ function MedicineDetail() {
           <p>The information provided on this page is for educational purposes only and is not intended as a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition. Never disregard professional medical advice or delay in seeking it because of something you have read on this website.</p>
         </div>
       </div>
+    </div>
     </div>
   );
 }
