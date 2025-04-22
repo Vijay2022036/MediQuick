@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { FiShoppingCart, FiCheck, FiShare2, FiHeart, FiThumbsUp } from 'react-icons/fi';
 import { AiFillStar, AiOutlineStar, AiOutlineClockCircle } from 'react-icons/ai';
 import axios from 'axios';
-
+import { useNavigate } from 'react-router-dom';
 // Dummy review data
 const dummyReviews = [
   {
@@ -121,7 +121,7 @@ function MedicineDetail() {
 
   const handleAddToCart = async () => {
     if (isAddingToCart) return;
-    
+    const navigate = useNavigate();
     setIsAddingToCart(true);
     
     try {
