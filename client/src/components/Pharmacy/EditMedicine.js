@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast , ToastContainer } from 'react-toastify';
 
 function EditMedicine() {
   const { id } = useParams();
@@ -28,7 +28,10 @@ function EditMedicine() {
       const data = await res.json();
       setMedicine(data);
     } catch (err) {
-      toast.error(err.message || 'Error loading medicine');
+      toast.error(err.message || 'Error loading medicine' , {
+        position: "top-center",
+        autoClose: 3000,
+      });
     } finally {
       setLoading(false);
     }
@@ -38,7 +41,10 @@ function EditMedicine() {
     e.preventDefault();
     const token = getToken();
     if (!token) {
-      toast.error('You are not logged in');
+      toast.error('You are not logged in' , {
+        position: "top-center",
+        autoClose: 3000,
+      });
       return;
     }
 
@@ -53,10 +59,16 @@ function EditMedicine() {
       });
 
       if (!res.ok) throw new Error('Failed to update medicine');
-      toast.success('Medicine updated successfully');
+      toast.success('Medicine updated successfully',{
+        position: "top-center",
+        autoClose: 3000,
+      });
       navigate('/pharmacy/dashboard');
     } catch (err) {
-      toast.error(err.message || 'Error updating medicine');
+      toast.error(err.message || 'Error updating medicine',{
+        position: "top-center",
+        autoClose: 3000,
+      });
     }
   };
 
@@ -69,6 +81,18 @@ function EditMedicine() {
 
   return (
     <div className="max-w-2xl mx-auto p-6">
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       <h2 className="text-2xl font-bold mb-6">Edit Medicine</h2>
       <form onSubmit={updateMedicine} className="space-y-4">
         <input
