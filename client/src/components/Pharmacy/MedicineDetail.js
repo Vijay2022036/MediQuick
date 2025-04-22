@@ -231,20 +231,20 @@ function MedicineDetail() {
     <div className="bg-gray-50 min-h-screen pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
         {/* Breadcrumb */}
-        <nav className="py-4 flex items-center text-sm text-gray-500">
-          <Link to="/" className="hover:text-blue-600 transition">Home</Link>
+        <nav className="py-4 flex items-center text-sm text-gray-500 overflow-x-auto">
+          <Link to="/" className="hover:text-blue-600 transition whitespace-nowrap">Home</Link>
           <span className="mx-2">›</span>
-          <Link to="/shop" className="hover:text-blue-600 transition">Shop</Link>
+          <Link to="/shop" className="hover:text-blue-600 transition whitespace-nowrap">Shop</Link>
           <span className="mx-2">›</span>
-          <span className="text-gray-800 font-medium">{medicine.name}</span>
+          <span className="text-gray-800 font-medium truncate">{medicine.name}</span>
         </nav>
         
         {/* Product Detail Section */}
         <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-4 sm:p-8">
             {/* Product Image */}
             <div className="flex flex-col items-center">
-              <div className="bg-white rounded-lg border border-gray-200 p-8 flex items-center justify-center h-96 w-full">
+              <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-8 flex items-center justify-center h-64 sm:h-96 w-full">
                 <img
                   src={medicine.image || '/placeholder.png'}
                   alt={medicine.name}
@@ -256,12 +256,12 @@ function MedicineDetail() {
                 />
               </div>
               
-              <div className="flex justify-center mt-6 gap-4">
-                <button className="p-3 rounded-lg border border-gray-200 hover:border-blue-600 hover:bg-blue-50 transition">
-                  <FiShare2 size={20} className="text-blue-600" />
+              <div className="flex justify-center mt-4 sm:mt-6 gap-3 sm:gap-4">
+                <button className="p-2 sm:p-3 rounded-lg border border-gray-200 hover:border-blue-600 hover:bg-blue-50 transition">
+                  <FiShare2 size={18} className="text-blue-600" />
                 </button>
-                <button className="p-3 rounded-lg border border-gray-200 hover:border-blue-600 hover:bg-blue-50 transition">
-                  <FiHeart size={20} className="text-blue-600" />
+                <button className="p-2 sm:p-3 rounded-lg border border-gray-200 hover:border-blue-600 hover:bg-blue-50 transition">
+                  <FiHeart size={18} className="text-blue-600" />
                 </button>
               </div>
             </div>
@@ -269,12 +269,12 @@ function MedicineDetail() {
             {/* Product Details */}
             <div className="flex flex-col justify-between">
               <div>
-                <div className="flex justify-between items-start">
-                  <h1 className="text-3xl font-bold text-gray-800">{medicine.name}</h1>
+                <div className="flex flex-wrap justify-between items-start gap-2">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">{medicine.name}</h1>
                   {medicine.stockQuantity > 0 ? (
-                    <span className="bg-green-100 text-green-700 px-4 py-1 rounded-full text-sm font-medium">In Stock</span>
+                    <span className="bg-green-100 text-green-700 px-3 sm:px-4 py-1 rounded-full text-sm font-medium whitespace-nowrap">In Stock</span>
                   ) : (
-                    <span className="bg-red-100 text-red-700 px-4 py-1 rounded-full text-sm font-medium">Out of Stock</span>
+                    <span className="bg-red-100 text-red-700 px-3 sm:px-4 py-1 rounded-full text-sm font-medium whitespace-nowrap">Out of Stock</span>
                   )}
                 </div>
                 
@@ -287,12 +287,12 @@ function MedicineDetail() {
                   </div>
                 </div>
                 
-                <div className="mt-6">
-                  <h2 className="text-2xl font-bold text-blue-600">₹{medicine.price}</h2>
+                <div className="mt-4 sm:mt-6">
+                  <h2 className="text-xl sm:text-2xl font-bold text-blue-600">₹{medicine.price}</h2>
                   <p className="text-sm text-gray-500 mt-1">Inclusive of all taxes</p>
                 </div>
 
-                <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="mt-4 sm:mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="flex items-center text-sm">
                     <span className="bg-blue-100 p-1.5 rounded-full mr-3 flex-shrink-0">
                       <FiCheck className="text-blue-600" size={14} />
@@ -322,24 +322,24 @@ function MedicineDetail() {
                   </div>
                 </div>
                 
-                <div className="mt-6 border-t border-gray-100 pt-6">
-                  <div className="grid grid-cols-3 gap-4 text-sm">
+                <div className="mt-4 sm:mt-6 border-t border-gray-100 pt-4 sm:pt-6">
+                  <div className="grid grid-cols-3 gap-2 sm:gap-4 text-sm">
                     <div className="font-semibold text-gray-700">Category:</div>
                     <div className="col-span-2 text-gray-600">{medicine.category || 'General Medicine'}</div>
                   </div>
                   
-                  <div className="grid grid-cols-3 gap-4 text-sm mt-3">
+                  <div className="grid grid-cols-3 gap-2 sm:gap-4 text-sm mt-2 sm:mt-3">
                     <div className="font-semibold text-gray-700">Batch No:</div>
                     <div className="col-span-2 text-gray-600">{medicine.batchNumber}</div>
                   </div>
                   
-                  <div className="grid grid-cols-3 gap-4 text-sm mt-3">
+                  <div className="grid grid-cols-3 gap-2 sm:gap-4 text-sm mt-2 sm:mt-3">
                     <div className="font-semibold text-gray-700">Expiry Date:</div>
                     <div className="col-span-2 text-gray-600">{new Date(medicine.expiryDate).toLocaleDateString()}</div>
                   </div>
                   
                   {medicine.stockQuantity > 0 && (
-                    <div className="grid grid-cols-3 gap-4 text-sm mt-3">
+                    <div className="grid grid-cols-3 gap-2 sm:gap-4 text-sm mt-2 sm:mt-3">
                       <div className="font-semibold text-gray-700">Availability:</div>
                       <div className="col-span-2 text-gray-600">
                         {medicine.stockQuantity} units available
@@ -349,12 +349,13 @@ function MedicineDetail() {
                 </div>
               </div>
               
-              <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                <div className="w-full sm:w-32">
-                  <div className="flex h-12">
+              {/* Improved responsive quantity and add to cart section */}
+              <div className="mt-6 sm:mt-8">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                  <div className="flex h-12 w-full sm:w-auto sm:flex-1 md:flex-none md:w-32">
                     <button 
                       onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
-                      className="px-4 border border-gray-300 bg-gray-50 rounded-l-lg hover:bg-gray-100 transition flex items-center justify-center"
+                      className="px-4 border border-gray-300 bg-gray-50 rounded-l-lg hover:bg-gray-100 transition flex items-center justify-center flex-shrink-0 w-12"
                     >
                       <span className="text-lg font-medium text-gray-700">-</span>
                     </button>
@@ -369,47 +370,47 @@ function MedicineDetail() {
                     />
                     <button 
                       onClick={() => setQuantity(prev => Math.min(medicine.stockQuantity, prev + 1))}
-                      className="px-4 border border-gray-300 bg-gray-50 rounded-r-lg hover:bg-gray-100 transition flex items-center justify-center"
+                      className="px-4 border border-gray-300 bg-gray-50 rounded-r-lg hover:bg-gray-100 transition flex items-center justify-center flex-shrink-0 w-12"
                     >
                       <span className="text-lg font-medium text-gray-700">+</span>
                     </button>
                   </div>
+                  
+                  <button
+                    onClick={handleAddToCart}
+                    disabled={medicine.stockQuantity === 0 || isAddingToCart}
+                    className={`h-12 rounded-lg flex items-center justify-center gap-2 transition w-full sm:flex-1
+                      ${
+                        medicine.stockQuantity === 0
+                          ? 'bg-gray-300 cursor-not-allowed text-gray-500'
+                          : isAddingToCart
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-orange-600 hover:bg-orange-700 text-white'
+                      }`}
+                  >
+                    {isAddingToCart ? (
+                      <div className="flex items-center">
+                        <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+                        Adding...
+                      </div>
+                    ) : (
+                      <>
+                        <FiShoppingCart size={20} />
+                        {medicine.stockQuantity === 0 ? 'Out of Stock' : 'Add to Cart'}
+                      </>
+                    )}
+                  </button>
                 </div>
-                
-                <button
-                  onClick={handleAddToCart}
-                  disabled={medicine.stockQuantity === 0 || isAddingToCart}
-                  className={`flex-1 h-12 rounded-lg flex items-center justify-center gap-2 transition
-                    ${
-                      medicine.stockQuantity === 0
-                        ? 'bg-gray-300 cursor-not-allowed text-gray-500'
-                        : isAddingToCart
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-orange-600 hover:bg-orange-700 text-white'
-                    }`}
-                >
-                  {isAddingToCart ? (
-                    <div className="flex items-center">
-                      <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full mr-2"></div>
-                      Adding...
-                    </div>
-                  ) : (
-                    <>
-                      <FiShoppingCart size={20} />
-                      {medicine.stockQuantity === 0 ? 'Out of Stock' : 'Add to Cart'}
-                    </>
-                  )}
-                </button>
               </div>
             </div>
           </div>
           
           {/* Tabs */}
           <div className="border-t border-gray-200">
-            <div className="flex">
+            <div className="flex overflow-x-auto scrollbar-hide">
               <button
                 onClick={() => setActiveTab('description')}
-                className={`px-8 py-4 font-medium text-sm transition
+                className={`px-4 sm:px-8 py-3 sm:py-4 font-medium text-sm whitespace-nowrap transition
                   ${activeTab === 'description'
                     ? 'border-b-2 border-blue-600 text-blue-600'
                     : 'text-gray-600 hover:text-gray-800'
@@ -419,7 +420,7 @@ function MedicineDetail() {
               </button>
               <button
                 onClick={() => setActiveTab('details')}
-                className={`px-8 py-4 font-medium text-sm transition
+                className={`px-4 sm:px-8 py-3 sm:py-4 font-medium text-sm whitespace-nowrap transition
                   ${activeTab === 'details'
                     ? 'border-b-2 border-blue-600 text-blue-600'
                     : 'text-gray-600 hover:text-gray-800'
@@ -430,7 +431,7 @@ function MedicineDetail() {
               <button
                 id="reviews"
                 onClick={() => setActiveTab('reviews')}
-                className={`px-8 py-4 font-medium text-sm transition
+                className={`px-4 sm:px-8 py-3 sm:py-4 font-medium text-sm whitespace-nowrap transition
                   ${activeTab === 'reviews'
                     ? 'border-b-2 border-blue-600 text-blue-600'
                     : 'text-gray-600 hover:text-gray-800'
@@ -440,7 +441,7 @@ function MedicineDetail() {
               </button>
             </div>
             
-            <div className="p-8">
+            <div className="p-4 sm:p-8">
               {activeTab === 'description' && (
                 <div className="prose max-w-none">
                   <p className="text-gray-700 leading-relaxed">
@@ -450,23 +451,23 @@ function MedicineDetail() {
               )}
               
               {activeTab === 'details' && (
-                <div className="space-y-8">
+                <div className="space-y-6 sm:space-y-8">
                   <div>
-                    <h3 className="font-semibold text-lg mb-3 text-gray-800">Composition</h3>
+                    <h3 className="font-semibold text-lg mb-2 sm:mb-3 text-gray-800">Composition</h3>
                     <p className="text-gray-700">
                       {medicine.composition || 'Composition details not available.'}
                     </p>
                   </div>
                   
                   <div>
-                    <h3 className="font-semibold text-lg mb-3 text-gray-800">Direction for Use</h3>
+                    <h3 className="font-semibold text-lg mb-2 sm:mb-3 text-gray-800">Direction for Use</h3>
                     <p className="text-gray-700">
                       Take as directed by your physician. Do not exceed the recommended dosage.
                     </p>
                   </div>
                   
                   <div>
-                    <h3 className="font-semibold text-lg mb-3 text-gray-800">Storage Information</h3>
+                    <h3 className="font-semibold text-lg mb-2 sm:mb-3 text-gray-800">Storage Information</h3>
                     <p className="text-gray-700">
                       Store in a cool, dry place away from direct sunlight. Keep out of reach of children.
                     </p>
@@ -477,29 +478,29 @@ function MedicineDetail() {
               {activeTab === 'reviews' && (
                 <div>
                   {/* Review Summary */}
-                  <div className="flex flex-col md:flex-row gap-8 mb-8 pb-8 border-b">
-                    <div className="md:w-1/3 flex flex-col items-center justify-center text-center p-6 bg-gray-50 rounded-lg shadow-sm">
-                      <h3 className="text-5xl font-bold text-gray-800">{overallRating}</h3>
-                      <div className="my-3">
+                  <div className="flex flex-col md:flex-row gap-6 sm:gap-8 mb-6 sm:mb-8 pb-6 sm:pb-8 border-b">
+                    <div className="md:w-1/3 flex flex-col items-center justify-center text-center p-4 sm:p-6 bg-gray-50 rounded-lg shadow-sm">
+                      <h3 className="text-4xl sm:text-5xl font-bold text-gray-800">{overallRating}</h3>
+                      <div className="my-2 sm:my-3">
                         <StarRating rating={Number(overallRating)} size="lg" />
                       </div>
                       <p className="text-sm text-gray-500">{dummyReviews.length} verified ratings</p>
                     </div>
                     
                     <div className="md:w-2/3">
-                      <h3 className="font-semibold text-lg mb-4 text-gray-800">Rating Distribution</h3>
+                      <h3 className="font-semibold text-lg mb-3 sm:mb-4 text-gray-800">Rating Distribution</h3>
                       {[5, 4, 3, 2, 1].map(star => (
-                        <div key={star} className="flex items-center mb-3">
-                          <div className="w-8 text-gray-700">{star} ★</div>
-                          <div className="w-full mx-3">
-                            <div className="bg-gray-200 rounded-full h-3 w-full">
+                        <div key={star} className="flex items-center mb-2 sm:mb-3">
+                          <div className="w-6 sm:w-8 text-gray-700">{star} ★</div>
+                          <div className="w-full mx-2 sm:mx-3">
+                            <div className="bg-gray-200 rounded-full h-2 sm:h-3 w-full">
                               <div 
-                                className="bg-yellow-400 h-3 rounded-full" 
+                                className="bg-yellow-400 h-2 sm:h-3 rounded-full" 
                                 style={{ width: `${ratingDistribution[star]}%` }}
                               ></div>
                             </div>
                           </div>
-                          <div className="w-12 text-right text-gray-700">{ratingDistribution[star]}%</div>
+                          <div className="w-10 sm:w-12 text-right text-gray-700">{ratingDistribution[star]}%</div>
                         </div>
                       ))}
                     </div>
@@ -507,12 +508,12 @@ function MedicineDetail() {
                   
                   {/* Customer Reviews */}
                   <div>
-                    <h3 className="font-semibold text-xl mb-6 text-gray-800">Customer Reviews</h3>
-                    <div className="space-y-8">
+                    <h3 className="font-semibold text-lg sm:text-xl mb-4 sm:mb-6 text-gray-800">Customer Reviews</h3>
+                    <div className="space-y-6 sm:space-y-8">
                       {(expandedReviews ? dummyReviews : dummyReviews.slice(0, 2)).map(review => (
-                        <div key={review.id} className="border-b pb-8">
+                        <div key={review.id} className="border-b pb-6 sm:pb-8">
                           <div className="flex items-start">
-                            <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden mr-4">
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-200 overflow-hidden mr-3 sm:mr-4 flex-shrink-0">
                               <img
                                 src={review.avatar}
                                 alt={review.user}
@@ -524,7 +525,7 @@ function MedicineDetail() {
                                 }}
                               />
                             </div>
-                            <div className="flex-1">
+                            <div className="flex-1 min-w-0">
                               <div className="flex flex-wrap items-center gap-2">
                                 <h4 className="font-medium text-gray-800">{review.user}</h4>
                                 {review.verified && (
@@ -563,7 +564,7 @@ function MedicineDetail() {
                     {dummyReviews.length > 2 && (
                       <button
                         onClick={() => setExpandedReviews(!expandedReviews)}
-                        className="mt-6 text-blue-600 hover:text-blue-800 font-medium flex items-center border border-blue-600 px-6 py-2 rounded-lg hover:bg-blue-50 transition"
+                        className="mt-4 sm:mt-6 text-blue-600 hover:text-blue-800 font-medium flex items-center justify-center border border-blue-600 px-4 sm:px-6 py-2 rounded-lg hover:bg-blue-50 transition w-full sm:w-auto"
                       >
                         {expandedReviews ? 'Show Less' : `Show All ${dummyReviews.length} Reviews`}
                       </button>
@@ -577,16 +578,16 @@ function MedicineDetail() {
         
         {/* Similar Products */}
         {similarProducts.length > 0 && (
-          <div className="mb-12">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Similar Products</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="mb-8 sm:mb-12">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">Similar Products</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               {similarProducts.map(product => (
                 <Link 
                   key={product._id} 
                   to={`/medicines/${product._id}`}
                   className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition duration-200 overflow-hidden flex flex-col group"
                 >
-                  <div className="w-full h-48 flex items-center justify-center p-6 bg-white">
+                  <div className="w-full h-40 sm:h-48 flex items-center justify-center p-4 sm:p-6 bg-white">
                     <img
                       src={product.image || '/placeholder.png'}
                       alt={product.name}
@@ -597,7 +598,7 @@ function MedicineDetail() {
                       }}
                     />
                   </div>
-                  <div className="p-4">
+                  <div className="p-3 sm:p-4">
                     <h3 className="text-gray-800 font-medium line-clamp-2 h-12 group-hover:text-blue-600 transition-colors">{product.name}</h3>
                     <div className="flex items-center mt-2">
                       <StarRating rating={product._id.length % 2 === 0 ? 4.5 : 4} size="sm" />
@@ -605,10 +606,44 @@ function MedicineDetail() {
                     <p className="text-blue-600 font-semibold mt-2">₹{product.price}</p>
                   </div>
                 </Link>
-              ))}
+            ))}
             </div>
           </div>
         )}
+        
+        {/* FAQ Section */}
+        <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+          <div className="p-4 sm:p-8">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">Frequently Asked Questions</h2>
+            <div className="space-y-4 sm:space-y-6">
+              <div className="border-b pb-4">
+                <h3 className="font-semibold text-gray-800 mb-2">Is this medicine safe for long-term use?</h3>
+                <p className="text-gray-700">This medicine is generally considered safe for long-term use when taken as directed by your physician. However, it's important to follow your doctor's recommendations and attend regular check-ups to monitor any potential side effects.</p>
+              </div>
+              
+              <div className="border-b pb-4">
+                <h3 className="font-semibold text-gray-800 mb-2">Can I take this medication with other prescriptions?</h3>
+                <p className="text-gray-700">It's important to inform your doctor about all medications you're currently taking before starting this medicine. Some drugs may interact with this medication, potentially affecting its effectiveness or increasing the risk of side effects.</p>
+              </div>
+              
+              <div className="border-b pb-4">
+                <h3 className="font-semibold text-gray-800 mb-2">What should I do if I miss a dose?</h3>
+                <p className="text-gray-700">If you miss a dose, take it as soon as you remember. However, if it's almost time for your next dose, skip the missed dose and continue with your regular dosing schedule. Do not take a double dose to make up for a missed one.</p>
+              </div>
+              
+              <div>
+                <h3 className="font-semibold text-gray-800 mb-2">Are there any dietary restrictions while taking this medicine?</h3>
+                <p className="text-gray-700">Follow any dietary instructions provided by your doctor. Some medications work better when taken with food, while others should be taken on an empty stomach. If you're unsure, consult your healthcare provider or pharmacist.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Disclaimer */}
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 sm:p-6 text-sm text-gray-700">
+          <h3 className="font-semibold text-gray-800 mb-2">Disclaimer</h3>
+          <p>The information provided on this page is for educational purposes only and is not intended as a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition. Never disregard professional medical advice or delay in seeking it because of something you have read on this website.</p>
+        </div>
       </div>
     </div>
   );

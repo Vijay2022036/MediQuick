@@ -69,7 +69,7 @@ export default function Shop() {
     setCartAnimation(medicineId);
     
     try {
-      await axios.post(
+      const res = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/api/cart/add`,
         { itemId: medicineId, quantity },
         {
@@ -81,10 +81,10 @@ export default function Shop() {
         }
       );
       
-      toast.success(`${quantity} ${medicine.name} added to cart`, {
-        position: "top-center",
-        autoClose: 3000,
-      });
+          toast.success(`${quantity} ${medicine.name} added to cart`, {
+          position: "top-center",
+          autoClose: 3000,
+        });
       
       // Reset animation after completion
       setTimeout(() => {
@@ -100,7 +100,7 @@ export default function Shop() {
         });
         navigate('/customer/login');
       } else {
-        toast.error('Failed to add to cart. Please try again.', {
+        toast.error('Only customers can ADD to cart.', {
           position: "top-center",
           autoClose: 3000,
         });
