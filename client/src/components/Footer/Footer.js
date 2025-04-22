@@ -5,8 +5,8 @@ export default function Footer() {
     return (
         <footer className="bg-gray-300 border-t border-gray-600">
             <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div className="mb-8 md:mb-0">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+                    <div className="mb-8 sm:mb-0">
                         <Link to="/" className="flex items-center text-gray-900 text-lg font-semibold">
                             MediQuik
                         </Link>
@@ -15,7 +15,7 @@ export default function Footer() {
                             delivered to your doorstep.
                         </p>
                     </div>
-                    <div className="grid grid-cols-2 md:col-span-2 gap-x-8">
+                    <div className="grid grid-cols-2 gap-x-8">
                         <div>
                             <h2 className="text-sm font-semibold text-gray-900 uppercase mb-4">Explore</h2>
                             <ul className="space-y-2">
@@ -54,8 +54,8 @@ export default function Footer() {
                     </div>
                 </div>
                 <hr className="my-8 border-gray-200" />
-                <div className="flex justify-between items-center">
-                    <p className="text-sm text-gray-600">
+                <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+                    <p className="text-sm text-gray-600 text-center sm:text-left">
                         &copy; 2024 MediQuik. All rights reserved.
                     </p>
                     <div className="flex space-x-4">
@@ -90,7 +90,9 @@ export default function Footer() {
                             >
                                 <path
                                     fill-rule="evenodd"
-                                    d="M20 1.892a8.178 8.178 0 0 1-2.355.635 4.074 4.074 0 0 0 1.8-2.235 8.344 8.344 0 0 1-2.605.98A4.13 4.13 0 0 0 13.85 0a4.068 4.068 0 0 0-4.1 4.038 4 4 0 0 0 .105.919A11.705 11.705 0 0 1 1.4.734a4.006 4.006 0 0 0 1.268 5.392 4.165 4.165 0 0 1-1.859-.5v.05A4.057 4.057 0 0 0 4.1 9.635a4.19 4.19 0 0 1-1.856.07 4.108 4.108 0 0 0 3.831 2.807A8.36 8.36 0 0 1 0 14.184 11.732 11.732 0 0 0 6.291 16 11.502 11.502 0 0 0 17.964 4.5c0-.177 0-.35-.012-.523A8.143 8.143 0 0 0 20 1.892ZM6.678 10.813a1.941 1.941 0 0 1-1.8-2.045 1.93 1.93 0 0 1 1.8-2.047 1.919 1.919 0 0 1 1.8 2.047 1.93 1.93 0 0 1-1.8 2.045Zm6.644 0a1.94 1.94 0 0 1-1.8-2.045 1.93 1.93 0 0 1 1.8-2.047 1.918 1.918 0 0 1 1.8 2.047 1.93 1.93 0 0 1-1.8 2.045Z" />
+                                    d="M20 1.892a8.178 8.178 0 0 1-2.355.635 4.074 4.074 0 0 0 1.8-2.235 8.344 8.344 0 0 1-2.605.98A4.13 4.13 0 0 0 13.85 0a4.068 4.068 0 0 0-4.1 4.038 4 4 0 0 0 .105.919A11.705 11.705 0 0 1 1.4.734a4.006 4.006 0 0 0 1.268 5.392 4.165 4.165 0 0 1-1.859-.5v.05A4.057 4.057 0 0 0 4.1 9.635a4.19 4.19 0 0 1-1.856.07 4.108 4.108 0 0 0 3.831 2.807A8.36 8.36 0 0 1 0 14.184 11.732 11.732 0 0 0 6.291 16 11.502 11.502 0 0 0 17.964 4.5c0-.177 0-.35-.012-.523A8.143 8.143 0 0 0 20 1.892ZM6.678 10.813a1.941 1.941 0 0 1-1.8-2.045 1.93 1.93 0 0 1 1.8-2.047 1.919 1.919 0 0 1 1.8 2.047 1.93 1.93 0 0 1-1.8 2.045Zm6.644 0a1.94 1.94 0 0 1-1.8-2.045 1.93 1.93 0 0 1 1.8-2.047 1.918 1.918 0 0 1 1.8 2.047 1.93 1.93 0 0 1-1.8 2.045Z"
+                                    clip-rule="evenodd"
+                                />
                             </svg>
                             <span className="sr-only">LinkedIn</span>
                         </Link>

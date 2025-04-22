@@ -13,7 +13,7 @@ function OrderHistory() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [view, setView] = useState('table'); // 'table' or 'cards'
+  const [view, setView] = useState('cards'); // Default to 'cards' for better mobile experience
   const [sortConfig, setSortConfig] = useState({
     key: 'orderDate',
     direction: 'desc'
@@ -21,6 +21,21 @@ function OrderHistory() {
   
   useEffect(() => {
     fetchOrderHistory();
+    
+    // Auto-switch to cards view on small screens and table on larger screens
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setView('cards');
+      } else {
+        setView('table');
+      }
+    };
+    
+    // Set initial view based on screen size
+    handleResize();
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const fetchOrderHistory = async () => {
@@ -124,83 +139,85 @@ function OrderHistory() {
 
   const renderTable = () => {
     return (
-      <Table
-        data={orders}
-        columns={[
-          { 
-            header: () => (
-              <button 
-                onClick={() => handleSort('id')}
-                className="flex items-center font-medium"
-              >
-                Order ID {getSortIcon('id')}
-              </button>
-            ), 
-            accessor: 'id',
-            render: (row) => <span className="font-mono text-sm">{row.id?.substring(0, 8)}...</span>
-          },
-          { 
-            header: () => (
-              <button 
-                onClick={() => handleSort('orderDate')}
-                className="flex items-center font-medium"
-              >
-                Date {getSortIcon('orderDate')}
-              </button>
-            ), 
-            accessor: 'orderDate', 
-            render: (row) => {
-              const date = new Date(row.orderDate || row.createdAt);
-              return (
-                <div>
-                  <div>{date.toLocaleDateString()}</div>
-                  <div className="text-xs text-gray-500">{date.toLocaleTimeString()}</div>
-                </div>
-              );
-            }
-          },
-          { 
-            header: () => (
-              <button 
-                onClick={() => handleSort('totalPrice')}
-                className="flex items-center font-medium"
-              >
-                Total Amount {getSortIcon('totalPrice')}
-              </button>
-            ), 
-            accessor: 'totalPrice', 
-            render: (row) => (
-              <span className="font-medium">
-                INR {(row.totalPrice || row.totalAmount || 0).toFixed(2)}
-              </span>
-            )
-          },
-          { 
-            header: 'Payment Status', 
-            accessor: 'paymentStatus',
-            render: (row) => getPaymentStatusBadge(row.paymentStatus)
-          },
-          {
-            header: 'Actions',
-            accessor: 'actions',
-            render: (row) => (
-              <button
-                onClick={() => handleViewDetails(row.id || row._id)}
-                className="bg-orange-600 hover:bg-orange-700 text-white px-3 py-1 rounded-lg text-sm flex items-center gap-1"
-              >
-                <EyeIcon size={14} />
-                Details
-              </button>
-            ),
-          },
-        ]}
-      />
+      <div className="overflow-x-auto">
+        <Table
+          data={orders}
+          columns={[
+            { 
+              header: () => (
+                <button 
+                  onClick={() => handleSort('id')}
+                  className="flex items-center font-medium"
+                >
+                  Order ID {getSortIcon('id')}
+                </button>
+              ), 
+              accessor: 'id',
+              render: (row) => <span className="font-mono text-xs md:text-sm">{row.id?.substring(0, 8)}...</span>
+            },
+            { 
+              header: () => (
+                <button 
+                  onClick={() => handleSort('orderDate')}
+                  className="flex items-center font-medium"
+                >
+                  Date {getSortIcon('orderDate')}
+                </button>
+              ), 
+              accessor: 'orderDate', 
+              render: (row) => {
+                const date = new Date(row.orderDate || row.createdAt);
+                return (
+                  <div>
+                    <div className="text-xs md:text-sm">{date.toLocaleDateString()}</div>
+                    <div className="text-xs text-gray-500 hidden sm:block">{date.toLocaleTimeString()}</div>
+                  </div>
+                );
+              }
+            },
+            { 
+              header: () => (
+                <button 
+                  onClick={() => handleSort('totalPrice')}
+                  className="flex items-center font-medium"
+                >
+                  Total {getSortIcon('totalPrice')}
+                </button>
+              ), 
+              accessor: 'totalPrice', 
+              render: (row) => (
+                <span className="font-medium text-xs md:text-sm">
+                  INR {(row.totalPrice || row.totalAmount || 0).toFixed(2)}
+                </span>
+              )
+            },
+            { 
+              header: 'Status', 
+              accessor: 'paymentStatus',
+              render: (row) => getPaymentStatusBadge(row.paymentStatus)
+            },
+            {
+              header: 'Actions',
+              accessor: 'actions',
+              render: (row) => (
+                <button
+                  onClick={() => handleViewDetails(row.id || row._id)}
+                  className="bg-orange-600 hover:bg-orange-700 text-white px-2 md:px-3 py-1 rounded-lg text-xs md:text-sm flex items-center gap-1"
+                >
+                  <EyeIcon size={14} className="hidden sm:inline" />
+                  Details
+                </button>
+              ),
+            },
+          ]}
+        />
+      </div>
     );
   };
 
   const renderCards = () => {
     return (
-      <div className="space-y-4">
+      <div className="space-y-3 md:space-y-4">
         {orders.map((order) => (
           <OrderHistoryCard
             key={order.id || order._id}
@@ -212,25 +229,54 @@ function OrderHistory() {
     );
   };
 
+  // Sorting controls for card view
+  const renderCardSorting = () => {
+    return (
+      <div className="mb-4 flex flex-wrap gap-2 justify-end">
+        <div className="text-sm text-gray-600">Sort by:</div>
+        <button
+          onClick={() => handleSort('orderDate')}
+          className={`text-sm flex items-center ${
+            sortConfig.key === 'orderDate' ? 'font-medium text-orange-600' : 'text-gray-600'
+          }`}
+        >
+          Date {sortConfig.key === 'orderDate' && (
+            sortConfig.direction === 'asc' ? <ArrowUpIcon size={14} /> : <ArrowDownIcon size={14} />
+          )}
+        </button>
+        <button
+          onClick={() => handleSort('totalPrice')}
+          className={`text-sm flex items-center ${
+            sortConfig.key === 'totalPrice' ? 'font-medium text-orange-600' : 'text-gray-600'
+          }`}
+        >
+          Amount {sortConfig.key === 'totalPrice' && (
+            sortConfig.direction === 'asc' ? <ArrowUpIcon size={14} /> : <ArrowDownIcon size={14} />
+          )}
+        </button>
+      </div>
+    );
+  };
+
   return (
-    <div className="container mx-auto p-4 md:p-6">
-      <div className="flex flex-wrap justify-between items-center mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Order History</h1>
+    <div className="container mx-auto px-3 sm:px-4 md:px-6 py-4 md:py-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800">Order History</h1>
         
-        <div className="flex items-center gap-3 mt-4 md:mt-0">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
           <button
             onClick={fetchOrderHistory}
-            className="flex items-center gap-1 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700"
+            className="flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 text-sm"
             disabled={loading}
           >
-            <RefreshCwIcon size={16} className={loading ? "animate-spin" : ""} />
-            Refresh
+            <RefreshCwIcon size={14} className={loading ? "animate-spin" : ""} />
+            <span className="hidden xs:inline">Refresh</span>
           </button>
           
           <div className="bg-gray-100 rounded-lg flex">
             <button
               onClick={() => setView('table')}
-              className={`px-3 py-1.5 rounded-l-lg ${view === 'table' 
+              className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-l-lg text-sm ${view === 'table' 
                 ? 'bg-orange-600 text-white' 
                 : 'text-gray-700 hover:bg-gray-200'}`}
             >
@@ -238,7 +284,7 @@ function OrderHistory() {
             </button>
             <button
               onClick={() => setView('cards')}
-              className={`px-3 py-1.5 rounded-r-lg ${view === 'cards' 
+              className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-r-lg text-sm ${view === 'cards' 
                 ? 'bg-orange-600 text-white' 
                 : 'text-gray-700 hover:bg-gray-200'}`}
             >
@@ -249,20 +295,20 @@ function OrderHistory() {
       </div>
       
       {loading && (
-        <div className="space-y-4">
-          <Skeleton className="h-16 w-full" />
-          <Skeleton className="h-16 w-full" />
-          <Skeleton className="h-16 w-full" />
+        <div className="space-y-3">
+          <Skeleton className="h-12 sm:h-16 w-full" />
+          <Skeleton className="h-12 sm:h-16 w-full" />
+          <Skeleton className="h-12 sm:h-16 w-full" />
         </div>
       )}
 
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-lg mb-6">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 sm:px-6 py-3 sm:py-4 rounded-lg mb-4 sm:mb-6 text-sm sm:text-base">
           <p className="font-bold mb-1">Error</p>
           <p>{error}</p>
           <button
             onClick={fetchOrderHistory}
-            className="mt-3 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
+            className="mt-2 sm:mt-3 bg-red-600 hover:bg-red-700 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-lg text-xs sm:text-sm font-medium"
           >
             Try Again
           </button>
@@ -270,13 +316,13 @@ function OrderHistory() {
       )}
 
       {!loading && !error && orders.length === 0 && (
-        <div className="bg-gray-50 border border-gray-200 rounded-xl p-8 text-center">
-          <ShoppingBagIcon className="mx-auto h-12 w-12 text-gray-400" />
-          <h3 className="mt-4 text-lg font-medium text-gray-900">No orders found</h3>
-          <p className="mt-2 text-gray-500">You haven't placed any orders yet.</p>
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 sm:p-8 text-center">
+          <ShoppingBagIcon className="mx-auto h-10 w-10 sm:h-12 sm:w-12 text-gray-400" />
+          <h3 className="mt-3 sm:mt-4 text-base sm:text-lg font-medium text-gray-900">No orders found</h3>
+          <p className="mt-1 sm:mt-2 text-sm sm:text-base text-gray-500">You haven't placed any orders yet.</p>
           <button
             onClick={() => navigate('/shop')}
-            className="mt-6 bg-orange-600 hover:bg-orange-700 text-white px-5 py-2 rounded-lg"
+            className="mt-4 sm:mt-6 bg-orange-600 hover:bg-orange-700 text-white px-4 sm:px-5 py-1.5 sm:py-2 rounded-lg text-sm"
           >
             Browse Products
           </button>
@@ -285,6 +331,7 @@ function OrderHistory() {
 
       {!loading && !error && orders.length > 0 && (
         <div className="bg-white shadow rounded-lg overflow-hidden">
+          {view === 'cards' && renderCardSorting()}
           {view === 'table' ? renderTable() : renderCards()}
         </div>
       )}
