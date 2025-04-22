@@ -4,6 +4,7 @@ import { FiShoppingCart, FiCheck, FiShare2, FiHeart, FiThumbsUp } from 'react-ic
 import { AiFillStar, AiOutlineStar, AiOutlineClockCircle } from 'react-icons/ai';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { toast , ToastContainer} from 'react-toastify';
 // Dummy review data
 const dummyReviews = [
   {
@@ -83,6 +84,7 @@ function MedicineDetail() {
   
   const overallRating = calculateOverallRating();
   const ratingDistribution = getRatingDistribution();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMedicine = async () => {
@@ -121,7 +123,6 @@ function MedicineDetail() {
 
   const handleAddToCart = async () => {
     if (isAddingToCart) return;
-    const navigate = useNavigate();
     setIsAddingToCart(true);
     
     try {
